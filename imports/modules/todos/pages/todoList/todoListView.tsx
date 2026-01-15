@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import TodoItem from '../../components/todoItem';
 import { TodoListControllerContext } from './todoListController';
@@ -17,20 +17,14 @@ const mockTodosData = [
 ];
 
 const TodoListView: React.FC = () => {
-    const navigate = useNavigate(); 
-    const { user } = useContext(TodoListControllerContext);
+    const navigate = useNavigate();
+    const { user, todos, loading } = useContext(TodoListControllerContext);
     const { Container, HeaderContainer, HeaderTitle, HeaderSubtitle, SectionTitle, ListContainer } = TodoListStyles;
 
-    // Simple local state for the mock to be interactive
-    const [todos, setTodos] = useState(mockTodosData);
+
 
     const userName = user?.username || 'Usuário';
 
-    const handleToggle = (id: string) => {
-        setTodos(prev => prev.map(todo =>
-            todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-        ));
-    };
 
     return (
         <Container>
@@ -53,11 +47,10 @@ const TodoListView: React.FC = () => {
             <ListContainer>
                 {todos.map(todo => (
                     <TodoItem
-                        key={todo.id}
+                        key={todo._id}
                         title={todo.title}
-                        createdBy={todo.createdBy}
-                        isCompleted={todo.isCompleted}
-                        onToggle={() => handleToggle(todo.id)}
+                        createdBy={todo.owner}
+                        isCompleted={todo.completed}
                     />
                 ))}
             </ListContainer>
