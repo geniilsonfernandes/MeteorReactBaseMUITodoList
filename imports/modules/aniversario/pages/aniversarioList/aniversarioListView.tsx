@@ -14,14 +14,19 @@ import AppLayoutContext, { IAppLayoutContext } from '/imports/app/appLayoutProvi
 
 
 const AniversarioListView = () => {
+	// controler context
 	const controller = useContext(AniversarioListControllerContext);
+	// layout context
 	const sysLayoutContext = useContext<IAppLayoutContext>(AppLayoutContext);
+	// navigate
 	const navigate = useNavigate();
-  const {
-    Container,
-    LoadingContainer,
-    SearchContainer
-  } = AniversarioListStyles;
+
+	/// styles
+	const {
+		Container,
+		LoadingContainer,
+		SearchContainer
+	} = AniversarioListStyles;
 
 	return (
 		<Container>

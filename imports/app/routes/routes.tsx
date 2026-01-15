@@ -1,4 +1,5 @@
 import Modules from '../../modules';
+/// paginas do sistema do boilerplate
 import Pages from '../../sysPages/config';
 import { IAppMenu, IRoute } from '../../modules/modulesTypings';
 import { useLocation } from 'react-router-dom';

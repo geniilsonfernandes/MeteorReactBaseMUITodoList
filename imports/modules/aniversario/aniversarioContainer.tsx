@@ -18,10 +18,10 @@ export default (props: IDefaultContainerProps) => {
 	const id = aniversarioId ?? props.id;
 
 	const validState = ['view', 'edit', 'create'];
-  const isValideState = hasValue(state) && validState.includes(state!);
+	const isValideState = hasValue(state) && validState.includes(state!);
 
 	const renderPage = useCallback(() => {
-    if (!isValideState) return <AniversarioListController />;
+		if (!isValideState) return <AniversarioListController />;
 		return <AniversarioDetailController />;
 	}, [isValideState]);
 

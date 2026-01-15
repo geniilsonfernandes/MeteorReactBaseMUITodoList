@@ -59,6 +59,9 @@ const AniversarioListController = () => {
 		};
 	}, [config]);
 
+
+
+	/// handlers  para criar novo item
 	const onAddButtonClick = useCallback(() => {
 		const newDocumentId = nanoid();
 		navigate(`/aniversario/create/${newDocumentId}`);

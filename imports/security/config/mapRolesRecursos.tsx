@@ -3,6 +3,7 @@ import { Recurso as Aniversario } from '/imports/modules/aniversario/config/recu
 import { Recurso as Usuarios } from '/imports/modules/userprofile/config/recurso';
 import { RoleType } from '/imports/security/config/roleType';
 import { HomeResources, SysFormTestPageResources } from '/imports/sysPages/config/resources';
+import { Recurso as Todos } from '/imports/modules/todos/config/recursos';
 
 const _getAllValues = (obj: any) => Object.keys(obj).map(key => obj[key]);
 
@@ -15,6 +16,7 @@ const _mapRolesRecursos: MapRolesRecursos = {
 		..._getAllValues(HomeResources),
 		..._getAllValues(SysFormTestPageResources),
 		..._getAllValues(Aniversario),
+		..._getAllValues(Todos),
 		Usuarios.USUARIO_UPDATE,
 		Usuarios.USUARIO_VIEW,	
 	],

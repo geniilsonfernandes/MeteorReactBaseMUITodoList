@@ -12,3 +12,4 @@ class AniversarioApi extends ProductBase<IAniversario> {
 }
 
 export const aniversarioApi = new AniversarioApi();
+
