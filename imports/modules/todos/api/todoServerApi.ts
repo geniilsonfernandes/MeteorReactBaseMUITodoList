@@ -26,6 +26,18 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 			});
 		});
 
+		this.addTransformedPublication('todoTransformedList', (filter = {}) => {
+			return this.defaultListCollectionPublication(filter, {
+				projection: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
+			});
+		}, (doc: ITodo) => {
+			/// opera em cima do que foi publicado (ex: procurar o usuário pelo id e colocar o objeto)
+			return {
+				...doc,
+				title: doc.title.toUpperCase()
+			};
+		});
+
 		this.initSeedData();
 
 	}
@@ -33,8 +45,6 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 
 	async initSeedData(): Promise<void> {
 		const count = await this.collectionInstance.find().countAsync();
-
-
 
 		if (count === 0) {
 			const initTodos = Array.from({ length: 20 }, (_, i) => ({

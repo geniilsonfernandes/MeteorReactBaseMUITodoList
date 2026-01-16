@@ -1,15 +1,15 @@
-import React, { useContext, useRef, useState } from 'react';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { SxProps, Theme } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import React, { useContext, useRef, useState } from 'react';
+import { generalMask } from '../../../../libs/MaskFunctions';
+import { hasValue } from '../../../../libs/hasValue';
+import { removerFormatacoes } from '../../../../libs/normalizarTexto';
 import { ISysFormComponent } from '../../InterfaceBaseSimpleFormComponent';
 import { SysFormContext } from '../../sysForm/sysForm';
 import { ISysFormComponentRef } from '../../sysForm/typings';
-import { generalMask } from '../../../../libs/MaskFunctions';
-import { hasValue } from '../../../../libs/hasValue';
 import SysLabelView from '../../sysLabelView/sysLabelView';
-import { removerFormatacoes } from '../../../../libs/normalizarTexto';
 import { SysViewField } from '../sysViewField/sysViewField';
 
 interface ISysTextFieldProps extends ISysFormComponent<TextFieldProps> {

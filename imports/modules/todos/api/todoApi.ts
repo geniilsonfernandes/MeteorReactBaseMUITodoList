@@ -8,7 +8,7 @@ class TodoApi extends ProductBase<ITodo> {
             enableCallMethodObserver: true,
             enableSubscribeObserver: true
         });
-    }   
+    }
 }
 
 export const todoApi = new TodoApi();

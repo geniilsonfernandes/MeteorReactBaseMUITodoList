@@ -1,44 +1,35 @@
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-import { ElementType } from 'react';
 import { SysSectionPaddingXY } from "/imports/ui/layoutComponents/sysLayoutComponents";
 import { sysSizing } from '/imports/ui/materialui/styles';
 
-interface IUserTodoListStyles {
-	Container: ElementType<BoxProps>;
-	FieldsForm: ElementType<BoxProps>;
-	Actions: ElementType<BoxProps>;
-
-}
-
-const UserTodoListStyles: IUserTodoListStyles = {
+export default {
 	Container: styled(SysSectionPaddingXY)(() => ({
-		width: '100%',
-		flex: 1,
 		display: 'flex',
 		flexDirection: 'column',
-		justifyContent: 'flex-start',
-		alignItems: 'flex-start',
-		gap: sysSizing.spacingFixedLg
+		gap: sysSizing.spacingFixedLg,
+		width: '540px',
+		padding: sysSizing.spacingFixedLg
+	})),
+	DialogTitleContainer: styled(Box)(({ theme }) => ({
+		width: '100%',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		gap: sysSizing.spacingFixedMd,
+
 	})),
 	FieldsForm: styled(Box)(({ theme }) => ({
-		width: '100%',
-		flex: 1,
 		display: 'flex',
-		flexDirection: 'column',
-		justifyContent: 'flex-start',
-		alignItems: 'flex-start',
-		gap: theme.spacing(2),
+		gap: sysSizing.spacingFixedMd,
+		flexDirection: 'column'
 	})),
 	Actions: styled(Box)(({ theme }) => ({
-		width: '100%',
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'flex-end',
-		alignItems: 'center',
-		gap: theme.spacing(2),
+		gap: sysSizing.spacingRemMd,
+		padding: 0,
+		justifyContent: 'center'
 	})),
-	
-};
+}
 
-export default UserTodoListStyles;

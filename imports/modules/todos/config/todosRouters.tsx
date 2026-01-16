@@ -19,7 +19,10 @@ export const todosRouterList: (IRoute | null)[] = [
 		path: '/todos',
 		component: TodoContainer,
 		isProtected: true,
-		resources: [Recurso.TODO_VIEW]
+		resources: [Recurso.TODO_VIEW],
+		templateProps: {
+			logo: 'Todo List',
+		}
+
 	},
-	
 ];

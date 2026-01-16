@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button';
+import { IconButton } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import React, { useContext, useRef } from 'react';
 import { ISysFormRef } from '../../../../ui/components/sysForm/typings';
@@ -7,32 +7,35 @@ import SysTextField from '../../../../ui/components/sysFormFields/sysTextField/s
 import SysIcon from '../../../../ui/components/sysIcon/sysIcon';
 import { ITodoDetailControllerContext, TodoDetailControllerContext } from './todoDetailController';
 import TodoDetailStyles from './todoDetailStyles';
+import SysForm from '/imports/ui/components/sysForm/sysForm';
 import { SysSelectField } from '/imports/ui/components/sysFormFields/sysSelectField/sysSelectField';
 
 const TodoDetailView = () => {
-    const { closeDialog } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
+    const { closeDialog, schema, todo, onSubmit, loading } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
 
-    const mode = 'edit';
     const sysFormRef = useRef<ISysFormRef>(null);
-    const { Container, FieldsForm, Actions } = TodoDetailStyles;
+    const { Container, FieldsForm, Actions, DialogTitleContainer } = TodoDetailStyles;
 
     return (
         <Container>
-            <DialogTitle variant="subtitle1" sx={{ padding: 0 }}>
-                Adicionar tarefa
-            </DialogTitle>
-            <FieldsForm>
-                <SysTextField name="username" placeholder="Ex.: José da Silva" />
-                <SysTextField name="email" placeholder="Ex.: jose.silva@email.com" />
-                <SysSelectField name="roles" placeholder="Selecionar" />
-
-                <Actions>
-                    <Button variant="outlined" startIcon={<SysIcon name={'close'} />} onClick={closeDialog}>
-                        Cancelar
-                    </Button>
-                    <SysFormButton startIcon={<SysIcon name={'check'} />}>Salvar</SysFormButton>
-                </Actions>
-            </FieldsForm>
+            <DialogTitleContainer>
+                <DialogTitle variant="subtitle1" sx={{ padding: 0 }}>
+                    Adicionar tarefa
+                </DialogTitle>
+                <IconButton onClick={closeDialog}>
+                    <SysIcon name="close" />
+                </IconButton>
+            </DialogTitleContainer>
+            <SysForm schema={schema} doc={todo} mode={"create"} onSubmit={onSubmit} ref={sysFormRef} loading={loading} >
+                <FieldsForm>
+                    <SysTextField name="title" placeholder="Digite o título da tarefa" />
+                    <SysTextField name="description" placeholder="Digite a descrição da tarefa" multiline rows={6} />
+                    <SysSelectField name="completed" placeholder="Selecionar" />
+                    <Actions>
+                        <SysFormButton startIcon={<SysIcon name={'check'} />}>Salvar</SysFormButton>
+                    </Actions>
+                </FieldsForm>
+            </SysForm>
         </Container>
     );
 };

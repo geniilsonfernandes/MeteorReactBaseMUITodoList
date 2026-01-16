@@ -1,8 +1,8 @@
 // region Imports
+import { ProductServerBase } from '../../../api/productServerBase';
+import { userprofileServerApi } from '../../../modules/userprofile/api/userProfileServerApi';
 import { Recurso } from '../config/recursos';
 import { exampleSch, IExample } from './exampleSch';
-import { userprofileServerApi } from '../../../modules/userprofile/api/userProfileServerApi';
-import { ProductServerBase } from '../../../api/productServerBase';
 
 // endregion
 
@@ -15,16 +15,35 @@ class ExampleServerApi extends ProductServerBase<IExample> {
 
 		const self = this;
 
+
+		const todo = {
+			todo: 'todo',
+			userId: 'userId', // id do usuário que criou o todo
+			user: {
+
+			}
+		};
+
+		// this.addTransformedPublication("name",callbackFilter,callbackTransform);
+
+
 		this.addTransformedPublication(
 			'exampleList',
+
+			// filtro
 			(filter = {}) => {
 				return this.defaultListCollectionPublication(filter, {
 					projection: { title: 1, type: 1, typeMulti: 1, createdat: 1 }
 				});
 			},
+
+
+			//  transformação
+
 			async (doc: IExample & { nomeUsuario: string }) => {
+
 				const userProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.createdby });
-				return { ...doc };
+				return { ...doc, user: userProfileDoc };
 			}
 		);
 
@@ -48,36 +67,36 @@ class ExampleServerApi extends ProductServerBase<IExample> {
 			});
 		});
 
-	// 	this.addRestEndpoint(
-	// 		'view',
-	// 		(params, options) => {
-	// 			console.log('Params', params);
-	// 			console.log('options.headers', options.headers);
-	// 			return { status: 'ok' };
-	// 		},
-	// 		['post']
-	// 	);
+		// 	this.addRestEndpoint(
+		// 		'view',
+		// 		(params, options) => {
+		// 			console.log('Params', params);
+		// 			console.log('options.headers', options.headers);
+		// 			return { status: 'ok' };
+		// 		},
+		// 		['post']
+		// 	);
 
-	// 	this.addRestEndpoint(
-	// 		'view/:exampleId',
-	// 		(params, _options) => {
-	// 			console.log('Rest', params);
-	// 			if (params.exampleId) {
-	// 				return self
-	// 					.defaultCollectionPublication(
-	// 						{
-	// 							_id: params.exampleId
-	// 						},
-	// 						{}
-	// 					)
-	// 					.fetch();
-	// 			} else {
-	// 				return { ...params };
-	// 			}
-	// 		},
-	// 		['get']
-	// 	);
-	// }
+		// 	this.addRestEndpoint(
+		// 		'view/:exampleId',
+		// 		(params, _options) => {
+		// 			console.log('Rest', params);
+		// 			if (params.exampleId) {
+		// 				return self
+		// 					.defaultCollectionPublication(
+		// 						{
+		// 							_id: params.exampleId
+		// 						},
+		// 						{}
+		// 					)
+		// 					.fetch();
+		// 			} else {
+		// 				return { ...params };
+		// 			}
+		// 		},
+		// 		['get']
+		// 	);
+		// }
 	}
 }
 
