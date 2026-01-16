@@ -3,6 +3,7 @@ import { todoApi } from "../../api/todoApi";
 import TodoDetailView from "./todoDetailView";
 import AppLayoutContext, { IAppLayoutContext } from "/imports/app/appLayoutProvider/appLayoutContext";
 import { ITodo } from "/imports/modules/todos/api/todoSch";
+import { IMeteorError } from "/imports/typings/IMeteorError";
 import { ISchema } from "/imports/typings/ISchema";
 
 export interface ITodoDetailControllerContext {
@@ -23,11 +24,26 @@ export const TodoDetailControllerContext = React.createContext<ITodoDetailContro
 );
 
 const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => {
-    const { closeDialog } = useContext<IAppLayoutContext>(AppLayoutContext);
+    const { closeDialog, showNotification } = useContext<IAppLayoutContext>(AppLayoutContext);
 
 
     const onSubmit = useCallback((doc: ITodo) => {
-        console.log(doc);
+        console.log('doc', doc);
+
+
+        todoApi.insert(doc, (e: IMeteorError) => {
+            if (e) return showNotification({
+                type: 'error',
+                title: 'Operação não realizada!',
+                message: `Erro ao realizar a operação: api ${e.reason}`
+            });
+            closeDialog();
+            showNotification({
+                type: 'success',
+                title: 'Operação realizada!',
+                message: `A tarefa foi cadastrada com sucesso!`
+            });
+        });
     }, []);
 
     return (
@@ -44,6 +60,7 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
                 updatedAt: new Date(),
                 owner: '',
                 team: '',
+                assignee: '',
             }
         }}>
             <TodoDetailView />

@@ -16,7 +16,7 @@ export const todoSch: ISchema<ITodo> = {
 		type: [String],
 		label: 'Concluído',
 		defaultValue: 'pendente',
-		optional: false,
+		optional: true,
 		options: () => [
 			{
 				value: 'concluido',
@@ -31,6 +31,16 @@ export const todoSch: ISchema<ITodo> = {
 				label: 'Cancelado'
 			}
 		]
+	},
+	assignee: {
+		type: String,
+		label: 'Designado a',
+		optional: true
+	},
+	owner: {
+		type: String,
+		label: 'Dono',
+		optional: true
 	}
 
 };
@@ -42,6 +52,6 @@ export interface ITodo extends IDoc {
 	createdAt: Date;
 	updatedAt: Date;
 	owner: string;
+	assignee: string;
 	team: string;
-
 }

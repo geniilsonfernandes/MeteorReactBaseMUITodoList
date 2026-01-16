@@ -2,14 +2,13 @@
 import { Recurso } from '../config/recursos';
 import { ITodo, todoSch } from './todoSch';
 import { ProductServerBase } from '/imports/api/productServerBase';
+import { IContext } from '/imports/typings/IContext';
 
 // endregion
 
 class TodoServerApi extends ProductServerBase<ITodo> {
 	constructor() {
 		super('todo', todoSch, { resources: Recurso });
-
-		const self = this;
 
 		this.addPublication(
 			'todoList',
@@ -26,22 +25,36 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 			});
 		});
 
-		this.addTransformedPublication('todoTransformedList', (filter = {}) => {
-			return this.defaultListCollectionPublication(filter, {
-				projection: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
-			});
-		}, (doc: ITodo) => {
-			/// opera em cima do que foi publicado (ex: procurar o usuário pelo id e colocar o objeto)
-			return {
-				...doc,
-				title: doc.title.toUpperCase()
-			};
-		});
+		// this.addTransformedPublication('todoTransformedList', (filter = {}) => {
+		// 	return this.defaultListCollectionPublication(filter, {
+		// 		projection: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
+		// 	});
+		// }, (doc: ITodo) => {
+		// 	/// opera em cima do que foi publicado (ex: procurar o usuário pelo id e colocar o objeto)
+		// 	return {
+		// 		...doc,
+		// 		title: doc.title.toUpperCase()
+		// 	};
+		// });
+
+
 
 		this.initSeedData();
 
 	}
 
+
+
+
+	async beforeInsert(_docObj: ITodo | Partial<ITodo>, _context: IContext) {
+		const result = await super.beforeInsert(_docObj, _context);
+		if (!result) return false;
+
+		_docObj.assignee = _context.user._id;
+		_docObj.owner = _context.user._id;
+
+		return true;
+	}
 
 	async initSeedData(): Promise<void> {
 		const count = await this.collectionInstance.find().countAsync();
