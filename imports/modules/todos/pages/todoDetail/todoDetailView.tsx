@@ -88,6 +88,7 @@ const TodoDetailView = () => {
             </Stack>}
             {component === 'drawer' && <Stack direction="row" spacing={1} justifyContent="flex-end" mt={"auto"}>
                 <styles.Subtitle>Criada por: {doc?.owner_data?.username}</styles.Subtitle>
+                <styles.Subtitle>Atribuída a: {doc?.assignee_data?.username}</styles.Subtitle>
             </Stack>}
         </styles.Container>
     );

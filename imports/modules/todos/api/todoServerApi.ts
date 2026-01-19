@@ -27,7 +27,7 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 					...doc,
 					owner_data: userProfileDoc,
 					assignee_data: assigneeProfileDoc,
-					isOwner: doc.owner === userId
+					isOwner: doc.owner === userId || doc.assignee === userId
 				};
 			}
 		);
@@ -43,7 +43,7 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 				...doc,
 				owner_data: userProfileDoc,
 				assignee_data: assigneeProfileDoc,
-				isOwner: doc.owner === userId
+				isOwner: doc.owner === userId || doc.assignee === userId
 			};
 		});
 
