@@ -37,6 +37,7 @@ export default {
 		shouldForwardProp: (prop) => prop !== 'isCompleted',
 	})<{ isCompleted: boolean }>(({ theme, isCompleted }) => ({
 		fontWeight: 500,
+		fontSize: 18,
 		textDecoration: isCompleted ? 'line-through' : 'none',
 		color: isCompleted ? theme.palette.text.secondary : theme.palette.text.primary,
 	}))

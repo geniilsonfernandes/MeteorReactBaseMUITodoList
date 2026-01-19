@@ -18,6 +18,7 @@ export interface ITodoDetailControllerContext {
     onChangeViewMode: (mode: 'view' | 'edit' | 'create') => void;
     viewMode: 'create' | 'edit' | 'view';
     formMode: 'create' | 'edit' | 'view';
+    onChangeCompleted: (completed: "pending" | "completed") => void;
 }
 
 interface ITodoDetailController {
@@ -31,8 +32,8 @@ export const TodoDetailControllerContext = React.createContext<ITodoDetailContro
 
 const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => {
 
-    const [viewMode, setViewMode] = React.useState<'create' | 'edit' | 'view'>(mode);
-    const [formMode, setFormMode] = React.useState<'create' | 'edit' | 'view'>(mode);
+    const [viewMode, setViewMode] = React.useState<ITodoDetailController['mode']>(mode);
+    const [formMode, setFormMode] = React.useState<ITodoDetailController['mode']>(mode);
 
     const { closeDialog, showNotification, closeDrawer } = useContext<IAppLayoutContext>(AppLayoutContext);
 
@@ -61,36 +62,43 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
                 title: 'Operação não realizada!',
                 message: `Erro ao realizar a operação: api ${e.reason}`
             });
-            if (formMode === 'create') {
-                closeDialog();
-            }
-            if (formMode !== 'create') {
-                onChangeFormMode('view');
-            }
+            formMode === 'create' ? closeDialog() : onChangeFormMode('view');
             showNotification({
                 type: 'success',
                 title: 'Operação realizada!',
                 message: `A tarefa foi ${formMode === 'create' ? 'cadastrada' : 'atualizada'} com sucesso!`
             });
         });
-    }, [formMode]);
+    }, [formMode, showNotification]);
 
 
     const onChangeCompleted = useCallback((completed: "pending" | "completed") => {
+        const newDoc = { ...todoDetail, completed };
+        todoApi.update(newDoc, (e: IMeteorError) => {
+            if (e) return showNotification({
+                type: 'error',
+                title: 'Erro ao alterar status',
+                message: `Erro ao realizar a operação: api ${e.reason}`
+            });
 
-    }, [id]);
+            showNotification({
+                type: 'success',
+                title: 'Status alterado!',
+                message: `Status da tarefa alterado para ${completed === 'completed' ? 'Concluído' : 'Pendente'}`
+            });
+
+        });
+    }, [todoDetail, showNotification]);
 
 
 
-    const onChangeFormMode = (mode: 'view' | 'edit' | 'create') => {
+    const onChangeFormMode = (mode: ITodoDetailController['mode']) => {
         setFormMode(mode);
     }
 
-    const onChangeViewMode = (mode: 'view' | 'edit' | 'create') => {
+    const onChangeViewMode = (mode: ITodoDetailController['mode']) => {
         setViewMode(mode);
     }
-
-
 
 
 

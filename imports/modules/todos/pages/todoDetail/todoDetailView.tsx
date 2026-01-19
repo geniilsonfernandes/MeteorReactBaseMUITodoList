@@ -15,13 +15,27 @@ import { SysSelectField } from '/imports/ui/components/sysFormFields/sysSelectFi
 
 const TodoDetailView = () => {
     const sysFormRef = useRef<ISysFormRef>(null);
-    const { closeDrawer, closeDialog, schema, doc, onSubmit, loading, viewMode, formMode, onChangeFormMode } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
+    const { closeDrawer, closeDialog, schema, doc, onSubmit, loading, viewMode, formMode, onChangeFormMode, onChangeCompleted } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
 
     const modeHeaderTitle = {
         "view": "",
         "edit": "Editar Tarefa",
         "create": "Criar Tarefa"
     }
+
+    if (loading) return <styles.Container>
+        <styles.DialogTitleContainer>
+            <DialogTitle variant="subtitle1" sx={{ padding: 0 }}>
+                {modeHeaderTitle[viewMode]}
+            </DialogTitle>
+            <Stack direction="row" spacing={1} alignItems="center">
+                <IconButton onClick={viewMode === 'view' ? closeDrawer : closeDialog}>
+                    <SysIcon name="close" />
+                </IconButton>
+            </Stack>
+        </styles.DialogTitleContainer>
+    </styles.Container>
+
     return (
         <styles.Container>
             <styles.DialogTitleContainer>
@@ -42,7 +56,7 @@ const TodoDetailView = () => {
                             icon={<RadioButtonUncheckedIcon />}
                             checkedIcon={<CheckCircleIcon />}
                             checked={doc.completed === "completed"}
-                            onChange={() => onChangeFormMode('edit')}
+                            onChange={(e) => onChangeCompleted(e.target.checked ? "completed" : "pending")}
                             sx={{ p: 0 }}
                         />
                         <styles.Title isCompleted={doc.completed === "completed"}>{doc.title}</styles.Title>

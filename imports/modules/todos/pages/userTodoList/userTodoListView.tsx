@@ -70,7 +70,7 @@ const UserTodoListView: React.FC = () => {
                 {loading && <Box>Loading...</Box>}
                 {controller.tabValue === UserTodoListTab.MinhasTarefas && (
                     <Box>
-                        {pendingTodos.length > 0 && (
+                        {pendingTodos.length > 0 ? (
                             <Box>
                                 <AccordionHeader onClick={() => toggleAccordion('pendingTodos')}>
                                     <IconButton
@@ -81,22 +81,37 @@ const UserTodoListView: React.FC = () => {
                                     >
                                         <SysIcon name={'expandMore'} />
                                     </IconButton>
-                                    <AccordionTitle>Não Concluídas ({pendingTodos.length})</AccordionTitle>
+                                    <AccordionTitle>
+                                        Não Concluídas ({pendingTodos.length})
+                                    </AccordionTitle>
                                 </AccordionHeader>
+
                                 <Collapse in={expanded.pendingTodos} timeout="auto" unmountOnExit>
-                                    <AccordionPanel >
+                                    <AccordionPanel>
                                         {pendingTodos.map((todo) => (
                                             <TodoItem
                                                 key={todo._id}
                                                 title={todo.title}
                                                 createdBy={todo.owner}
-                                                isCompleted={todo.completed === 'concluido'}
+                                                isCompleted={todo.completed === 'completed'}
                                                 onToggle={() => { }}
                                                 onClick={() => controller.onShowDetailTodo(todo._id)}
                                             />
                                         ))}
                                     </AccordionPanel>
                                 </Collapse>
+                            </Box>
+                        ) : (
+                            <Box
+                                sx={{
+                                    padding: 3,
+                                    textAlign: 'left',
+                                    color: 'text.secondary'
+                                }}
+                            >
+                                🎉 Nenhuma tarefa pendente!
+                                <br />
+                                Aproveite o tempo livre ou crie uma nova tarefa.
                             </Box>
                         )}
 
@@ -118,7 +133,7 @@ const UserTodoListView: React.FC = () => {
                                                 key={todo._id}
                                                 title={todo.title}
                                                 createdBy={todo.owner}
-                                                isCompleted={todo.completed === 'concluido'}
+                                                isCompleted={todo.completed === 'completed'}
                                                 onToggle={() => { }}
                                                 onClick={() => controller.onShowDetailTodo(todo._id)}
                                             />
