@@ -13,6 +13,7 @@ interface ITodoItemProps {
     onClick?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
+    isOwner?: boolean;
 }
 
 const ItemContainer = styled(Box)(({ theme }) => ({
@@ -50,7 +51,7 @@ const Subtitle = styled(Typography)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onToggle, onClick, onEdit, onDelete }) => {
+const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onToggle, onClick, onEdit, onDelete, isOwner }) => {
 
     const handleEdit = () => {
         if (onEdit) onEdit();
@@ -70,11 +71,13 @@ const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onT
                 checkedIcon={<CheckCircleIcon />}
                 onClick={(e) => e.stopPropagation()}
                 checked={isCompleted}
+                disabled={!isOwner}
                 onChange={(e) => {
                     e.stopPropagation();
                     if (onToggle) onToggle();
                 }}
                 sx={{ p: 0 }}
+                size='large'
             />
             <TextContainer>
                 <Title variant="body1" isCompleted={isCompleted}>
@@ -84,7 +87,7 @@ const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onT
                     Criada por: <Box component="span" sx={{ textDecoration: 'underline' }}>{createdBy}</Box>
                 </Subtitle>
             </TextContainer>
-            <TodoItemMenu onEdit={handleEdit} onDelete={handleDelete} />
+            <TodoItemMenu onEdit={isOwner ? handleEdit : undefined} onDelete={isOwner ? handleDelete : undefined} />
 
         </ItemContainer>
     );

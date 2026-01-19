@@ -66,5 +66,5 @@ export interface ITodo extends IDoc {
 	//
 	owner_data?: IUserProfile;
 	assignee_data?: IUserProfile;
-
+	isOwner: boolean;
 }

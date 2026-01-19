@@ -4,6 +4,7 @@ import React from 'react';
 
 interface ITodoItemMenuProps {
     onEdit?: () => void;
+
     onDelete?: () => void;
 }
 
@@ -43,8 +44,14 @@ const TodoItemMenu: React.FC<ITodoItemMenuProps> = ({ onEdit, onDelete }) => {
                 onClose={() => handleClose()}
                 onClick={(e) => e.stopPropagation()}
             >
-                <MenuItem onClick={handleEdit}>Editar</MenuItem>
-                <MenuItem onClick={handleDelete}>Excluir</MenuItem>
+                <MenuItem
+                    disabled={!onEdit}
+                    onClick={handleEdit}
+                >Editar</MenuItem>
+                <MenuItem
+                    disabled={!onDelete}
+                    onClick={handleDelete}
+                >Excluir</MenuItem>
             </Menu>
         </>
     );

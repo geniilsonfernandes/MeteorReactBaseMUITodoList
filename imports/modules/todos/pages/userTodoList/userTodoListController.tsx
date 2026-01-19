@@ -72,29 +72,7 @@ const UserTodoListController: React.FC = () => {
             children: <TodoDetailController id={nanoid()} mode="create" component="dialog" />
         });
     };
-    const onEditTodo = (id?: string) => {
-        showDialog({
-            sx: { borderRadius: sysSizing.radiusMd },
-            children: <TodoDetailController id={id} mode="edit" component="dialog" />
-        });
-    }
 
-    const onDeleteTodo = (id?: string) => {
-
-        showDialog({
-            sx: { borderRadius: sysSizing.radiusMd, },
-            children: <TodoDeleteController id={id} />
-        });
-    }
-
-    const onShowDetailTodo = (id?: string) => {
-        if (!id) return;
-        showDrawer({
-            anchor: 'right',
-            sx: { borderRadius: sysSizing.radiusMd },
-            children: <TodoDetailController id={id} mode="view" component="drawer" />
-        });
-    };
 
 
     const lastTodosRef = useRef<ITodo[]>([]);
@@ -102,6 +80,7 @@ const UserTodoListController: React.FC = () => {
     const { loading, todos } = useTracker(() => {
         const filter = {
             owner: user?._id,
+            // assignee: user?._id,
             $or: [
                 { title: { $regex: search, $options: 'i' } },
                 { description: { $regex: search, $options: 'i' } },
@@ -140,6 +119,30 @@ const UserTodoListController: React.FC = () => {
     }, [todos, showNotification]);
 
 
+
+    const onEditTodo = (id?: string) => {
+        showDialog({
+            sx: { borderRadius: sysSizing.radiusMd },
+            children: <TodoDetailController id={id} mode="edit" component="dialog" />
+        });
+    }
+
+    const onDeleteTodo = (id?: string) => {
+
+        showDialog({
+            sx: { borderRadius: sysSizing.radiusMd, },
+            children: <TodoDeleteController id={id} />
+        });
+    }
+
+    const onShowDetailTodo = (id?: string) => {
+        if (!id) return;
+        showDrawer({
+            anchor: 'right',
+            sx: { borderRadius: sysSizing.radiusMd },
+            children: <TodoDetailController id={id} mode="view" component="drawer" />
+        });
+    };
 
 
     const providerValues = useMemo(() => ({

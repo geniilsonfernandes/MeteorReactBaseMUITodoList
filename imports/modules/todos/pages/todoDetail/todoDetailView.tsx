@@ -24,6 +24,8 @@ const TodoDetailView = () => {
         "delete": "Excluir Tarefa"
     }
 
+    const isOwner = doc?.isOwner;
+
     if (loading) return <styles.Container isDrawer={component === 'drawer'}>
         <styles.DialogTitleContainer>
             <DialogTitle variant="subtitle1" sx={{ padding: 0 }}>
@@ -50,7 +52,7 @@ const TodoDetailView = () => {
                     {modeHeaderTitle[viewMode]}
                 </DialogTitle>
                 <Stack direction="row" spacing={1} alignItems="center">
-                    {viewMode === 'view' && <TodoItemMenu onEdit={() => onChangeFormMode('edit')} onDelete={() => onDeleteTodo(doc._id)} />}
+                    {viewMode === 'view' && isOwner && <TodoItemMenu onEdit={() => onChangeFormMode('edit')} onDelete={() => onDeleteTodo(doc._id)} />}
                     <IconButton onClick={viewMode === 'view' ? closeDrawer : closeDialog}>
                         <SysIcon name="close" />
                     </IconButton>
@@ -63,6 +65,7 @@ const TodoDetailView = () => {
                             icon={<RadioButtonUncheckedIcon />}
                             checkedIcon={<CheckCircleIcon />}
                             checked={doc?.completed === "completed"}
+                            disabled={!isOwner}
                             onChange={(e) => onChangeCompleted(e.target.checked ? "completed" : "pending")}
                             sx={{ p: 0 }}
                         />
@@ -80,7 +83,7 @@ const TodoDetailView = () => {
                     </styles.Actions>
                 </styles.FieldsForm>
             </SysForm>
-            {formMode === 'view' && <Stack direction="row" spacing={1} justifyContent="center">
+            {formMode === 'view' && isOwner && <Stack direction="row" spacing={1} justifyContent="center">
                 <SysFormButton onClick={() => onChangeFormMode('edit')} startIcon={<SysIcon name={'edit'} />}>Editar</SysFormButton>
             </Stack>}
             {component === 'drawer' && <Stack direction="row" spacing={1} justifyContent="flex-end" mt={"auto"}>

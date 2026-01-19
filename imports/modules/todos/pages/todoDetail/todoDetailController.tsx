@@ -29,14 +29,14 @@ interface ITodoDetailController {
     mode: 'create' | 'edit' | 'view';
     component: "dialog" | "drawer";
     id?: string;
-    isDelete?: boolean;
+    isOwner?: boolean;
 }
 
 export const TodoDetailControllerContext = React.createContext<ITodoDetailControllerContext>(
     {} as ITodoDetailControllerContext
 );
 
-const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, component, isDelete }) => {
+const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, component, isOwner }) => {
 
     const [viewMode, setViewMode] = React.useState<ITodoDetailController['mode']>(mode);
     const [formMode, setFormMode] = React.useState<ITodoDetailController['mode']>(mode);

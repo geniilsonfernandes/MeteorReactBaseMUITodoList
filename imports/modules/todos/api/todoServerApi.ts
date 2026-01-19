@@ -15,22 +15,36 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 			'todoList',
 			(filter = {}) => {
 				return this.collectionInstance.find(filter, {
-					fields: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1, assignee: 1 }
+					fields: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1, assignee: 1, createdat: 1 }
 				});
 			},
 			async (doc: ITodo) => {
 				const userProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.owner });
 				const assigneeProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.assignee });
+
+				const userId = await Meteor.userId();
 				return {
 					...doc,
 					owner_data: userProfileDoc,
-					assignee_data: assigneeProfileDoc
+					assignee_data: assigneeProfileDoc,
+					isOwner: doc.owner === userId
 				};
 			}
 		);
 
-		this.addPublication('todoDetail', (filter = {}) => {
+		this.addTransformedPublication('todoDetail', (filter = {}) => {
 			return this.defaultDetailCollectionPublication(filter, {});
+		}, async (doc: ITodo) => {
+			const userProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.owner });
+			const assigneeProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.assignee });
+
+			const userId = await Meteor.userId();
+			return {
+				...doc,
+				owner_data: userProfileDoc,
+				assignee_data: assigneeProfileDoc,
+				isOwner: doc.owner === userId
+			};
 		});
 
 

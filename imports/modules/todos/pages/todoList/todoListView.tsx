@@ -3,61 +3,51 @@ import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import TodoItem from '../../components/todoItem';
 import { TodoListControllerContext } from './todoListController';
-import TodoListStyles from './todoListStyles';
+import styles from './todoListStyles';
 import { SysFab } from '/imports/ui/components/sysFab/sysFab';
 import SysIcon from '/imports/ui/components/sysIcon/sysIcon';
 
-const mockTodosData = [
-    { id: '1', title: 'Elaborar roteiro do grupo focal', createdBy: 'Você', isCompleted: false },
-    { id: '2', title: 'Realizar atividade', createdBy: 'Você', isCompleted: false },
-    { id: '3', title: 'Fazer reunião de alinhamento', createdBy: 'Jonathan Smith', isCompleted: true },
-    { id: '4', title: 'Definir prazos', createdBy: 'Jane Doe', isCompleted: true },
-    { id: '5', title: 'Definir prazos', createdBy: 'Jane Doe', isCompleted: true },
-    { id: '6', title: 'Definir prazos', createdBy: 'Jane Doe', isCompleted: true },
-];
 
 const TodoListView: React.FC = () => {
     const navigate = useNavigate();
-    const { user, todos, loading } = useContext(TodoListControllerContext);
-    const { Container, HeaderContainer, HeaderTitle, HeaderSubtitle, SectionTitle, ListContainer } = TodoListStyles;
-
-
+    const { user, todos, loading, ...controller } = useContext(TodoListControllerContext);
 
     const userName = user?.username || 'Usuário';
 
 
     return (
-        <Container>
-            <HeaderContainer>
-                <HeaderTitle>
+        <styles.Container>
+            <styles.HeaderContainer>
+                <styles.HeaderTitle>
                     <Typography variant="h4" component="h1" fontWeight="bold">
                         Olá, {userName}
                     </Typography>
-                </HeaderTitle>
-                <HeaderSubtitle>
+                </styles.HeaderTitle>
+                <styles.HeaderSubtitle>
                     <Typography variant="body1">
                         Seus projetos muito mais organizados. Veja as tarefas adicionadas por seu time, por você e para você!
                     </Typography>
-                </HeaderSubtitle>
-            </HeaderContainer>
-            <SectionTitle>
+                </styles.HeaderSubtitle>
+            </styles.HeaderContainer>
+            <styles.SectionTitle>
                 Adicionadas Recentemente
-            </SectionTitle>
+            </styles.SectionTitle>
 
-            <ListContainer>
+            <styles.ListContainer>
                 {todos.map(todo => (
                     <TodoItem
                         key={todo._id}
                         title={todo.title}
-                        createdBy={todo.owner}
-                        isCompleted={todo.completed}
-                        onClick={() => navigate(`/todos/detail/${todo._id}`)}
-                        onToggle={() => { }}
-                        onEdit={() => { }}
-                        onDelete={() => { }}
+                        createdBy={todo.owner_data?.username || ''}
+                        isCompleted={todo.completed === 'completed'}
+                        isOwner={todo.isOwner}
+                        onToggle={() => controller.onChangeCompleted(todo._id, todo.completed === 'completed' ? 'pending' : 'completed')}
+                        onClick={() => { controller.onShowDetailTodo(todo._id) }}
+                        onEdit={() => { controller.onEditTodo(todo._id) }}
+                        onDelete={() => { controller.onDeleteTodo(todo._id) }}
                     />
                 ))}
-            </ListContainer>
+            </styles.ListContainer>
             <SysFab
                 variant="extended"
                 text="Ir para tarefas"
@@ -72,7 +62,7 @@ const TodoListView: React.FC = () => {
                     zIndex: 1000
                 }}
             />
-        </Container>
+        </styles.Container>
     );
 };
 

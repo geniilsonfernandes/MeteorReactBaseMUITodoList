@@ -34,9 +34,6 @@ const UserTodoListView: React.FC = () => {
         });
     };
 
-    console.log(todos);
-
-
 
 
     return (
@@ -103,6 +100,7 @@ const UserTodoListView: React.FC = () => {
                                                 title={todo.title}
                                                 createdBy={todo.owner_data?.username || ''}
                                                 isCompleted={todo.completed === 'completed'}
+                                                isOwner={todo.isOwner}
                                                 onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
                                                 onClick={() => controller.onShowDetailTodo(todo._id)}
                                                 onEdit={() => controller.onEditTodo(todo._id)}
