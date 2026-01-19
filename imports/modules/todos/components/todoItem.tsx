@@ -1,9 +1,9 @@
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { Box, Checkbox, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Box, Checkbox, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
+import TodoItemMenu from './TodoItemMenu';
 
 interface ITodoItemProps {
     title: string;
@@ -51,28 +51,12 @@ const Subtitle = styled(Typography)(({ theme }) => ({
 }));
 
 const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onToggle, onClick, onEdit, onDelete }) => {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
 
-    const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation();
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleMenuClose = (event?: React.MouseEvent) => {
-        if (event) {
-            event.stopPropagation();
-        }
-        setAnchorEl(null);
-    };
-
-    const handleEdit = (event: React.MouseEvent) => {
-        handleMenuClose(event);
+    const handleEdit = () => {
         if (onEdit) onEdit();
     };
 
-    const handleDelete = (event: React.MouseEvent) => {
-        handleMenuClose(event);
+    const handleDelete = () => {
         if (onDelete) onDelete();
     };
 
@@ -96,18 +80,8 @@ const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onT
                     Criada por: <Box component="span" sx={{ textDecoration: 'underline' }}>{createdBy}</Box>
                 </Subtitle>
             </TextContainer>
-            <IconButton edge="end" onClick={handleMenuClick}>
-                <MoreVertIcon />
-            </IconButton>
-            <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={() => setAnchorEl(null)}
-                onClick={(e) => e.stopPropagation()}
-            >
-                <MenuItem onClick={handleEdit}>Edit</MenuItem>
-                <MenuItem onClick={handleDelete}>Delete</MenuItem>
-            </Menu>
+            <TodoItemMenu onEdit={handleEdit} onDelete={handleDelete} />
+
         </ItemContainer>
     );
 };

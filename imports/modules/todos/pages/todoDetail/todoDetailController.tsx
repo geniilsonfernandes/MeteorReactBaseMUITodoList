@@ -9,11 +9,15 @@ import { ISchema } from "/imports/typings/ISchema";
 
 export interface ITodoDetailControllerContext {
     closeDialog: () => void;
+    closeDrawer: () => void;
     schema: ISchema<ITodo>;
-    todo: ITodo;
+    doc: ITodo;
     onSubmit: (doc: ITodo) => void;
     loading: boolean;
-    mode: 'create' | 'edit' | 'view';
+    onChangeFormMode: (mode: 'view' | 'edit' | 'create') => void;
+    onChangeViewMode: (mode: 'view' | 'edit' | 'create') => void;
+    viewMode: 'create' | 'edit' | 'view';
+    formMode: 'create' | 'edit' | 'view';
 }
 
 interface ITodoDetailController {
@@ -27,7 +31,10 @@ export const TodoDetailControllerContext = React.createContext<ITodoDetailContro
 
 const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => {
 
-    const { closeDialog, showNotification } = useContext<IAppLayoutContext>(AppLayoutContext);
+    const [viewMode, setViewMode] = React.useState<'create' | 'edit' | 'view'>(mode);
+    const [formMode, setFormMode] = React.useState<'create' | 'edit' | 'view'>(mode);
+
+    const { closeDialog, showNotification, closeDrawer } = useContext<IAppLayoutContext>(AppLayoutContext);
 
     const { loading, todoDetail } = useTracker(() => {
         const filter = {
@@ -43,21 +50,40 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
 
 
     const onSubmit = useCallback((doc: ITodo) => {
-        todoApi.insert(doc, (e: IMeteorError) => {
+        const modes = {
+            "create": todoApi.insert,
+            "edit": todoApi.update,
+            "view": todoApi.update
+        }
+        modes[formMode](doc, (e: IMeteorError) => {
             if (e) return showNotification({
                 type: 'error',
                 title: 'Operação não realizada!',
                 message: `Erro ao realizar a operação: api ${e.reason}`
             });
-            closeDialog();
+            if (formMode === 'create') {
+                closeDialog();
+            }
+            if (formMode !== 'create') {
+                onChangeFormMode('view');
+            }
             showNotification({
                 type: 'success',
                 title: 'Operação realizada!',
-                message: `A tarefa foi cadastrada com sucesso!`
+                message: `A tarefa foi ${formMode === 'create' ? 'cadastrada' : 'atualizada'} com sucesso!`
             });
         });
-    }, []);
+    }, [formMode]);
 
+
+
+    const onChangeFormMode = (mode: 'view' | 'edit' | 'create') => {
+        setFormMode(mode);
+    }
+
+    const onChangeViewMode = (mode: 'view' | 'edit' | 'create') => {
+        setViewMode(mode);
+    }
 
 
 
@@ -66,11 +92,16 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
     return (
         <TodoDetailControllerContext.Provider value={{
             closeDialog,
+            closeDrawer,
             schema: todoApi.getSchema(),
             loading,
             onSubmit,
-            todo: todoDetail,
-            mode
+            doc: todoDetail,
+            onChangeFormMode,
+            onChangeViewMode,
+            viewMode,
+            formMode
+
         }}>
             <TodoDetailView />
         </TodoDetailControllerContext.Provider>

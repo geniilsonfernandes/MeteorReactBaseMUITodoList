@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import { SysSectionPaddingXY } from "/imports/ui/layoutComponents/sysLayoutComponents";
@@ -31,5 +32,13 @@ export default {
 		padding: 0,
 		justifyContent: 'center'
 	})),
-}
 
+	Title: styled(Typography, {
+		shouldForwardProp: (prop) => prop !== 'isCompleted',
+	})<{ isCompleted: boolean }>(({ theme, isCompleted }) => ({
+		fontWeight: 500,
+		textDecoration: isCompleted ? 'line-through' : 'none',
+		color: isCompleted ? theme.palette.text.secondary : theme.palette.text.primary,
+	}))
+
+}	

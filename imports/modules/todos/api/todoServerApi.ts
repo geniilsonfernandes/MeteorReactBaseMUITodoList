@@ -25,6 +25,8 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 
 
 
+
+
 		// this.addTransformedPublication('todoTransformedList', (filter = {}) => {
 		// 	return this.defaultListCollectionPublication(filter, {
 		// 		projection: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
