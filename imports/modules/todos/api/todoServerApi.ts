@@ -2,6 +2,7 @@
 import { Recurso } from '../config/recursos';
 import { ITodo, todoSch } from './todoSch';
 import { ProductServerBase } from '/imports/api/productServerBase';
+import { userprofileServerApi } from '/imports/modules/userprofile/api/userProfileServerApi';
 import { IContext } from '/imports/typings/IContext';
 
 // endregion
@@ -10,13 +11,22 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 	constructor() {
 		super('todo', todoSch, { resources: Recurso });
 
-		this.addPublication(
+		this.addTransformedPublication(
 			'todoList',
 			(filter = {}) => {
 				return this.collectionInstance.find(filter, {
-					fields: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
+					fields: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1, assignee: 1 }
 				});
 			},
+			async (doc: ITodo) => {
+				const userProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.owner });
+				const assigneeProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.assignee });
+				return {
+					...doc,
+					owner_data: userProfileDoc,
+					assignee_data: assigneeProfileDoc
+				};
+			}
 		);
 
 		this.addPublication('todoDetail', (filter = {}) => {

@@ -1,3 +1,4 @@
+import { IUserProfile } from '../../userprofile/api/userProfileSch';
 import { IDoc } from '/imports/typings/IDoc';
 import { ISchema } from '/imports/typings/ISchema';
 
@@ -61,4 +62,9 @@ export interface ITodo extends IDoc {
 	assignee: string;
 	team: string;
 	isCompleted: boolean;
+
+	//
+	owner_data?: IUserProfile;
+	assignee_data?: IUserProfile;
+
 }

@@ -13,6 +13,7 @@ export default {
 		gap: sysSizing.spacingFixedLg,
 		maxWidth: '540px',
 		width: '540px',
+		height: isDrawer ? '100%' : 'auto',
 		padding: sysSizing.spacingFixedLg,
 		[theme.breakpoints.down('sm')]: {
 			padding: sysSizing.spacingFixedMd,
@@ -49,6 +50,10 @@ export default {
 		fontSize: 18,
 		textDecoration: isCompleted ? 'line-through' : 'none',
 		color: isCompleted ? theme.palette.text.secondary : theme.palette.text.primary,
+	})),
+	Subtitle: styled(Typography)(({ theme }) => ({
+		fontSize: '0.75rem',
+		color: theme.palette.text.secondary,
 	}))
 
 }	

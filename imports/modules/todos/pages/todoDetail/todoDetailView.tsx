@@ -83,6 +83,9 @@ const TodoDetailView = () => {
             {formMode === 'view' && <Stack direction="row" spacing={1} justifyContent="center">
                 <SysFormButton onClick={() => onChangeFormMode('edit')} startIcon={<SysIcon name={'edit'} />}>Editar</SysFormButton>
             </Stack>}
+            {component === 'drawer' && <Stack direction="row" spacing={1} justifyContent="flex-end" mt={"auto"}>
+                <styles.Subtitle>Criada por: {doc?.owner_data?.username}</styles.Subtitle>
+            </Stack>}
         </styles.Container>
     );
 };
