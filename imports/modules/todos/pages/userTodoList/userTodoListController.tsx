@@ -1,6 +1,7 @@
+import { debounce } from "lodash";
 import { useTracker } from "meteor/react-meteor-data";
 import { nanoid } from "nanoid";
-import React, { useCallback, useContext, useMemo } from "react";
+import React, { useCallback, useContext, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { todoApi } from "../../api/todoApi";
 import { ITodo } from "../../api/todoSch";
@@ -28,6 +29,9 @@ export interface IUserTodoListControllerContext {
     onChangeCompleted: (id: string, completed: "pending" | "completed") => void
     onEditTodo: (id?: string) => void
     onDeleteTodo: (id?: string) => void
+    //
+    search: string
+    handleChangeSearch: (e: React.ChangeEvent<HTMLInputElement>) => void
 
     // states
     tabValue: UserTodoListTab
@@ -48,10 +52,19 @@ const UserTodoListController: React.FC = () => {
     const closePage = useCallback(() => navigate(-1), []);
 
     const [tabValue, setTabValue] = React.useState(UserTodoListTab.MinhasTarefas);
+    const [search, setSearch] = React.useState('');
 
     const handleChangeTab = (newValue: UserTodoListTab) => {
         setTabValue(newValue);
     };
+
+    const handleChangeSearch = React.useMemo(
+        () =>
+            debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+                setSearch(e.target.value);
+            }, 500),
+        []
+    );
 
     const onCreateTodo = () => {
         showDialog({
@@ -84,17 +97,27 @@ const UserTodoListController: React.FC = () => {
     };
 
 
+    const lastTodosRef = useRef<ITodo[]>([]);
+
     const { loading, todos } = useTracker(() => {
         const filter = {
-            owner: user?._id
+            owner: user?._id,
+            $or: [
+                { title: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } },
+            ]
         }
         const subHandle = todoApi.subscribe('todoList', filter);
-        const todos = subHandle?.ready() ? todoApi.find(filter).fetch() : [];
-        return {
-            todos,
-            loading: !!subHandle && !subHandle.ready(),
-        };
-    }, [user]);
+
+        if (!subHandle?.ready() || !subHandle) {
+            return { loading: true, todos: lastTodosRef.current };
+        }
+
+        const data = todoApi.find(filter).fetch();
+        lastTodosRef.current = data;
+
+        return { loading: false, todos: data };
+    }, [user, search]);
 
 
     const onChangeCompleted = useCallback((id: string, completed: "pending" | "completed") => {
@@ -131,7 +154,9 @@ const UserTodoListController: React.FC = () => {
         onShowDetailTodo,
         onChangeCompleted,
         onDeleteTodo,
-        onEditTodo
+        onEditTodo,
+        search,
+        handleChangeSearch
     }), [tabValue, todos, user]);
 
     return (

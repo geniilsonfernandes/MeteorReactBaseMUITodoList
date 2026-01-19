@@ -1,10 +1,11 @@
-import { Box, Collapse } from '@mui/material';
+import { Box, CircularProgress, Collapse } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import React, { useContext } from "react";
 import TodoItem from '../../components/todoItem';
 import { IUserTodoListControllerContext, UserTodoListControllerContext, UserTodoListTab } from './userTodoListController';
 import UserTodoListStyles from './userTodoListStyles';
 import { SysFab } from '/imports/ui/components/sysFab/sysFab';
+import SysTextField from '/imports/ui/components/sysFormFields/sysTextField/sysTextField';
 import SysIcon from '/imports/ui/components/sysIcon/sysIcon';
 import { SysTabs } from '/imports/ui/components/sysTabs/sysTabs';
 
@@ -55,10 +56,25 @@ const UserTodoListView: React.FC = () => {
                 value={controller.tabValue}
                 handleChange={(_, value) => controller.handleChangeTab(value as UserTodoListTab)}
             />
+            <Box my={2}>
+                <SysTextField
+                    name="search"
+                    placeholder="Pesquisar..."
+                    startAdornment={<SysIcon name="search" color="action" />}
+                    endAdornment={loading ? <CircularProgress size={24} color="primary" /> : null}
+                    value={controller.search}
+                    onChange={controller.handleChangeSearch}
+                    fullWidth
+                    sxMap={{
+                        textField: {
+                            backgroundColor: 'white'
+                        }
+                    }}
+                />
+            </Box>
             <Box
                 width={'100%'}
             >
-                {loading && <Box>Loading...</Box>}
                 {controller.tabValue === UserTodoListTab.MinhasTarefas && (
                     <Box>
                         {pendingTodos.length > 0 ? (
@@ -76,20 +92,22 @@ const UserTodoListView: React.FC = () => {
                                         Não Concluídas ({pendingTodos.length})
                                     </AccordionTitle>
                                 </AccordionHeader>
-                                <AccordionPanel>
-                                    {pendingTodos && pendingTodos.map((todo) => (
-                                        <TodoItem
-                                            key={todo._id}
-                                            title={todo.title}
-                                            createdBy={todo.owner}
-                                            isCompleted={todo.completed === 'completed'}
-                                            onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
-                                            onClick={() => controller.onShowDetailTodo(todo._id)}
-                                            onEdit={() => controller.onEditTodo(todo._id)}
-                                            onDelete={() => controller.onDeleteTodo(todo._id)}
-                                        />
-                                    ))}
-                                </AccordionPanel>
+                                <Collapse in={expanded.pendingTodos} timeout="auto" unmountOnExit>
+                                    <AccordionPanel>
+                                        {pendingTodos && pendingTodos.map((todo) => (
+                                            <TodoItem
+                                                key={todo._id}
+                                                title={todo.title}
+                                                createdBy={todo.owner}
+                                                isCompleted={todo.completed === 'completed'}
+                                                onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
+                                                onClick={() => controller.onShowDetailTodo(todo._id)}
+                                                onEdit={() => controller.onEditTodo(todo._id)}
+                                                onDelete={() => controller.onDeleteTodo(todo._id)}
+                                            />
+                                        ))}
+                                    </AccordionPanel>
+                                </Collapse>
                             </Box>
                         ) : (
                                 <Box>
