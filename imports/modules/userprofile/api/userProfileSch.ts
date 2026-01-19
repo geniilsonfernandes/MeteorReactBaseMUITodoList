@@ -39,7 +39,7 @@ export const userProfileSch: ISchema<IUserProfile> = {
 	roles: {
 		type: [String],
 		label: 'Perfil de acesso',
-		defaultValue: [],
+		defaultValue: ['Usuario'],
 		optional: true,
 		options: () => [
 			{

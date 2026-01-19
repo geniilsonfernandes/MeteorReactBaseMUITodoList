@@ -51,6 +51,10 @@ const TodoListView: React.FC = () => {
                         title={todo.title}
                         createdBy={todo.owner}
                         isCompleted={todo.completed}
+                        onClick={() => navigate(`/todos/detail/${todo._id}`)}
+                        onToggle={() => { }}
+                        onEdit={() => { }}
+                        onDelete={() => { }}
                     />
                 ))}
             </ListContainer>

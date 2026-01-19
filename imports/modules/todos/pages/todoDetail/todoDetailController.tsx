@@ -1,3 +1,4 @@
+import { useTracker } from "meteor/react-meteor-data";
 import React, { useCallback, useContext } from "react";
 import { todoApi } from "../../api/todoApi";
 import TodoDetailView from "./todoDetailView";
@@ -12,10 +13,11 @@ export interface ITodoDetailControllerContext {
     todo: ITodo;
     onSubmit: (doc: ITodo) => void;
     loading: boolean;
+    mode: 'create' | 'edit' | 'view';
 }
 
 interface ITodoDetailController {
-    mode: 'create' | 'edit' | 'read';
+    mode: 'create' | 'edit' | 'view';
     id?: string;
 }
 
@@ -24,13 +26,23 @@ export const TodoDetailControllerContext = React.createContext<ITodoDetailContro
 );
 
 const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => {
+
     const { closeDialog, showNotification } = useContext<IAppLayoutContext>(AppLayoutContext);
+
+    const { loading, todoDetail } = useTracker(() => {
+        const filter = {
+            _id: id
+        }
+        const subHandle = todoApi.subscribe('todoDetail', filter);
+        const todoDetail = subHandle?.ready() ? todoApi.findOne(filter) : {};
+        return {
+            todoDetail: todoDetail as ITodo,
+            loading: !!subHandle && !subHandle.ready(),
+        };
+    }, [id]);
 
 
     const onSubmit = useCallback((doc: ITodo) => {
-        console.log('doc', doc);
-
-
         todoApi.insert(doc, (e: IMeteorError) => {
             if (e) return showNotification({
                 type: 'error',
@@ -46,22 +58,19 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
         });
     }, []);
 
+
+
+
+
+
     return (
         <TodoDetailControllerContext.Provider value={{
             closeDialog,
             schema: todoApi.getSchema(),
-            loading: false,
+            loading,
             onSubmit,
-            todo: {
-                title: '',
-                description: '',
-                completed: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                owner: '',
-                team: '',
-                assignee: '',
-            }
+            todo: todoDetail,
+            mode
         }}>
             <TodoDetailView />
         </TodoDetailControllerContext.Provider>

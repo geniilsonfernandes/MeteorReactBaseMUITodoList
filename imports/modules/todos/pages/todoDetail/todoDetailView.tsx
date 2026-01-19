@@ -11,22 +11,27 @@ import SysForm from '/imports/ui/components/sysForm/sysForm';
 import { SysSelectField } from '/imports/ui/components/sysFormFields/sysSelectField/sysSelectField';
 
 const TodoDetailView = () => {
-    const { closeDialog, schema, todo, onSubmit, loading } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
+    const { closeDialog, schema, todo, onSubmit, loading, mode } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
 
     const sysFormRef = useRef<ISysFormRef>(null);
     const { Container, FieldsForm, Actions, DialogTitleContainer } = TodoDetailStyles;
 
+    const modes = {
+        "view": "visualizar",
+        "edit": "editar",
+        "create": "criar"
+    }
     return (
         <Container>
             <DialogTitleContainer>
                 <DialogTitle variant="subtitle1" sx={{ padding: 0 }}>
-                    Adicionar tarefa
+                    {modes[mode]}
                 </DialogTitle>
                 <IconButton onClick={closeDialog}>
                     <SysIcon name="close" />
                 </IconButton>
             </DialogTitleContainer>
-            <SysForm schema={schema} doc={todo} mode={"create"} onSubmit={onSubmit} ref={sysFormRef} loading={loading} >
+            <SysForm schema={schema} doc={todo} mode={mode} onSubmit={onSubmit} ref={sysFormRef} loading={loading} >
                 <FieldsForm>
                     <SysTextField name="title" placeholder="Digite o título da tarefa" />
                     <SysTextField name="description" placeholder="Digite a descrição da tarefa" multiline rows={6} />

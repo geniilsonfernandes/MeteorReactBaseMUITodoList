@@ -13,17 +13,17 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 		this.addPublication(
 			'todoList',
 			(filter = {}) => {
-				return this.defaultListCollectionPublication(filter, {
-					projection: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
+				return this.collectionInstance.find(filter, {
+					fields: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
 				});
 			},
 		);
 
 		this.addPublication('todoDetail', (filter = {}) => {
-			return this.defaultDetailCollectionPublication(filter, {
-				projection: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1 }
-			});
+			return this.defaultDetailCollectionPublication(filter, {});
 		});
+
+
 
 		// this.addTransformedPublication('todoTransformedList', (filter = {}) => {
 		// 	return this.defaultListCollectionPublication(filter, {
@@ -53,6 +53,8 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 		_docObj.assignee = _context.user._id;
 		_docObj.owner = _context.user._id;
 
+
+
 		return true;
 	}
 
@@ -63,7 +65,7 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 			const initTodos = Array.from({ length: 20 }, (_, i) => ({
 				title: `Todo ${i + 1}`,
 				description: `Description ${i + 1}`,
-				completed: false,
+				completed: 'pendente',
 				createdAt: new Date(),
 				updatedAt: new Date(),
 				owner: 'owner 1',

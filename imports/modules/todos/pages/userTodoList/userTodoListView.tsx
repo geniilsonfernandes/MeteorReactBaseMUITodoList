@@ -1,7 +1,6 @@
 import { Box, Collapse } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import React, { useContext } from "react";
-import { useNavigate } from 'react-router-dom';
 import TodoItem from '../../components/todoItem';
 import { IUserTodoListControllerContext, UserTodoListControllerContext, UserTodoListTab } from './userTodoListController';
 import UserTodoListStyles from './userTodoListStyles';
@@ -25,23 +24,25 @@ type ExpandedType = {
 }
 
 const UserTodoListView: React.FC = () => {
-    const navigate = useNavigate();
-    const controller = useContext<IUserTodoListControllerContext>(UserTodoListControllerContext);
-    const { Container, Header, AccordionHeader, AccordionTitle, AccordionPanel } = UserTodoListStyles;
+    const { todos, loading, ...controller } = useContext<IUserTodoListControllerContext>(UserTodoListControllerContext);
+    const { Container, Header, AccordionHeader, AccordionTitle, AccordionPanel, } = UserTodoListStyles;
 
-    const completedTodos = React.useMemo(() => mockTodosData.filter(todo => todo.isCompleted), []);
-    const pendingTodos = React.useMemo(() => mockTodosData.filter(todo => !todo.isCompleted), []);
+    const completedTodos = React.useMemo(() => todos.filter(todo => todo.completed === 'completed'), [todos]);
+    const pendingTodos = React.useMemo(() => todos.filter(todo => todo.completed === 'pending'), [todos]);
 
     const [expanded, setExpanded] = React.useState<ExpandedType>({
         pendingTodos: true,
         completedTodos: false
     });
+
     const toggleAccordion = (panel: keyof ExpandedType) => {
         setExpanded({
             ...expanded,
             [panel]: !expanded[panel]
         });
     };
+
+
 
     return (
         <Container>
@@ -66,6 +67,7 @@ const UserTodoListView: React.FC = () => {
             <Box
                 width={'100%'}
             >
+                {loading && <Box>Loading...</Box>}
                 {controller.tabValue === UserTodoListTab.MinhasTarefas && (
                     <Box>
                         {pendingTodos.length > 0 && (
@@ -85,12 +87,12 @@ const UserTodoListView: React.FC = () => {
                                     <AccordionPanel >
                                         {pendingTodos.map((todo) => (
                                             <TodoItem
-                                                key={todo.id}
+                                                key={todo._id}
                                                 title={todo.title}
-                                                createdBy={todo.createdBy}
-                                                isCompleted={todo.isCompleted}
+                                                createdBy={todo.owner}
+                                                isCompleted={todo.completed === 'concluido'}
                                                 onToggle={() => { }}
-                                                onClick={() => controller.onShowDetailTodo(todo.id)}
+                                                onClick={() => controller.onShowDetailTodo(todo._id)}
                                             />
                                         ))}
                                     </AccordionPanel>
@@ -113,12 +115,12 @@ const UserTodoListView: React.FC = () => {
                                     <AccordionPanel>
                                         {completedTodos.map((todo) => (
                                             <TodoItem
-                                                key={todo.id}
+                                                key={todo._id}
                                                 title={todo.title}
-                                                createdBy={todo.createdBy}
-                                                isCompleted={todo.isCompleted}
+                                                createdBy={todo.owner}
+                                                isCompleted={todo.completed === 'concluido'}
                                                 onToggle={() => { }}
-                                                onClick={() => controller.onShowDetailTodo(todo.id)}
+                                                onClick={() => controller.onShowDetailTodo(todo._id)}
                                             />
                                         ))}
                                     </AccordionPanel>

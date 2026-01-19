@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react';
-import UserProfileDetailView from './userProfileDetailView';
 import { useTracker } from 'meteor/react-meteor-data';
-import { userprofileApi } from '../../api/userProfileApi';
-import { IUserProfile } from '../../api/userProfileSch';
+import React, { useCallback, useContext, useState } from 'react';
 import { IMeteorError } from '../../../../typings/BoilerplateDefaultTypings';
 import { ISchema } from '../../../../typings/ISchema';
+import { userprofileApi } from '../../api/userProfileApi';
+import { IUserProfile } from '../../api/userProfileSch';
+import UserProfileDetailView from './userProfileDetailView';
 import AppLayoutContext, { IAppLayoutContext } from '/imports/app/appLayoutProvider/appLayoutContext';
 
 interface IUserProfileDetailControllerContext {
@@ -37,6 +37,7 @@ const UserProfileDetailController = ({ id, mode }: IUserProfileDetailController)
 			trackerLoading: !!subHandle && !subHandle.ready()
 		};
 	}, [id]);
+
 
 	const onSubmit = useCallback(
 		(doc: IUserProfile) => {
