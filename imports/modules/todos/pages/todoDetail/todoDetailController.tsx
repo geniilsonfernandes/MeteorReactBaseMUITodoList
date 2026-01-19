@@ -76,6 +76,11 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
     }, [formMode]);
 
 
+    const onChangeCompleted = useCallback((completed: "pending" | "completed") => {
+
+    }, [id]);
+
+
 
     const onChangeFormMode = (mode: 'view' | 'edit' | 'create') => {
         setFormMode(mode);
@@ -100,7 +105,8 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
             onChangeFormMode,
             onChangeViewMode,
             viewMode,
-            formMode
+            formMode,
+            onChangeCompleted
 
         }}>
             <TodoDetailView />
