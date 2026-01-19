@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { todoApi } from "../../api/todoApi";
 import { ITodo } from "../../api/todoSch";
+import TodoDeleteController from "../todoDelete/todoDeleteController";
 import TodoDetailController from "../todoDetail/todoDetailController";
 import UserTodoListView from "./userTodoListView";
 import AppLayoutContext, { IAppLayoutContext } from "/imports/app/appLayoutProvider/appLayoutContext";
@@ -18,17 +19,18 @@ export enum UserTodoListTab {
 }
 
 export interface IUserTodoListControllerContext {
+    // metodos
     closePage: () => void
-    tabValue: UserTodoListTab
     handleChangeTab: (newValue: UserTodoListTab) => void
-    onNewTodoButtonClick: () => void
+    onCreateTodo: () => void
     closeDialog: () => void
     onShowDetailTodo: (id?: string) => void
-
-    // metodos
     onChangeCompleted: (id: string, completed: "pending" | "completed") => void
+    onEditTodo: (id?: string) => void
+    onDeleteTodo: (id?: string) => void
 
-    // 
+    // states
+    tabValue: UserTodoListTab
     todos: ITodo[]
     loading: boolean
 }
@@ -51,21 +53,33 @@ const UserTodoListController: React.FC = () => {
         setTabValue(newValue);
     };
 
-    const onNewTodoButtonClick = () => {
+    const onCreateTodo = () => {
         showDialog({
             sx: { borderRadius: sysSizing.radiusMd },
-            children: <TodoDetailController id={nanoid()} mode="create" />
+            children: <TodoDetailController id={nanoid()} mode="create" component="dialog" />
         });
     };
+    const onEditTodo = (id?: string) => {
+        showDialog({
+            sx: { borderRadius: sysSizing.radiusMd },
+            children: <TodoDetailController id={id} mode="edit" component="dialog" />
+        });
+    }
+
+    const onDeleteTodo = (id?: string) => {
+
+        showDialog({
+            sx: { borderRadius: sysSizing.radiusMd, },
+            children: <TodoDeleteController id={id} />
+        });
+    }
 
     const onShowDetailTodo = (id?: string) => {
-
-
         if (!id) return;
         showDrawer({
             anchor: 'right',
             sx: { borderRadius: sysSizing.radiusMd },
-            children: <TodoDetailController id={id} mode="view" />
+            children: <TodoDetailController id={id} mode="view" component="drawer" />
         });
     };
 
@@ -107,15 +121,17 @@ const UserTodoListController: React.FC = () => {
 
     const providerValues = useMemo(() => ({
         user,
-        closePage,
+        todos,
         tabValue,
+        loading,
+        closePage,
         handleChangeTab,
-        onNewTodoButtonClick,
+        onCreateTodo,
         closeDialog,
         onShowDetailTodo,
-        todos,
-        loading,
-        onChangeCompleted
+        onChangeCompleted,
+        onDeleteTodo,
+        onEditTodo
     }), [tabValue, todos, user]);
 
     return (

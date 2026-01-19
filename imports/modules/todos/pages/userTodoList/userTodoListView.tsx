@@ -76,21 +76,20 @@ const UserTodoListView: React.FC = () => {
                                         Não Concluídas ({pendingTodos.length})
                                     </AccordionTitle>
                                 </AccordionHeader>
-
-                                <Collapse in={expanded.pendingTodos} timeout="auto" unmountOnExit>
-                                    <AccordionPanel>
-                                        {pendingTodos && pendingTodos.map((todo) => (
-                                            <TodoItem
-                                                key={todo._id}
-                                                title={todo.title}
-                                                createdBy={todo.owner}
-                                                isCompleted={todo.completed === 'completed'}
-                                                onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
-                                                onClick={() => controller.onShowDetailTodo(todo._id)}
-                                            />
-                                        ))}
-                                    </AccordionPanel>
-                                </Collapse>
+                                <AccordionPanel>
+                                    {pendingTodos && pendingTodos.map((todo) => (
+                                        <TodoItem
+                                            key={todo._id}
+                                            title={todo.title}
+                                            createdBy={todo.owner}
+                                            isCompleted={todo.completed === 'completed'}
+                                            onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
+                                            onClick={() => controller.onShowDetailTodo(todo._id)}
+                                            onEdit={() => controller.onEditTodo(todo._id)}
+                                            onDelete={() => controller.onDeleteTodo(todo._id)}
+                                        />
+                                    ))}
+                                </AccordionPanel>
                             </Box>
                         ) : (
                                 <Box>
@@ -121,6 +120,7 @@ const UserTodoListView: React.FC = () => {
                                                 isCompleted={todo.completed === 'completed'}
                                                 onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
                                                 onClick={() => controller.onShowDetailTodo(todo._id)}
+                                                onEdit={() => controller.onEditTodo(todo._id)}
                                             />
                                         ))}
                                     </AccordionPanel>
@@ -141,7 +141,7 @@ const UserTodoListView: React.FC = () => {
                 variant="extended"
                 text="Adicionar Tarefa"
                 size="small"
-                onClick={controller.onNewTodoButtonClick}
+                onClick={controller.onCreateTodo}
                 startIcon={<SysIcon name={'add'} />}
                 sx={{
                     position: 'fixed',

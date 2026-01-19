@@ -19,9 +19,7 @@ export const TodoListControllerContext = React.createContext<ITodoListController
 
 const TodoListController: React.FC = () => {
     const { user } = useContext(AuthContext);
-
     const filter = {};
-
     const { loading, todos } = useTracker(() => {
         const subHandle = todoApi.subscribe('todoList', filter);
         const todos = subHandle?.ready() ? todoApi.find({}).fetch() : [];
@@ -31,14 +29,11 @@ const TodoListController: React.FC = () => {
         };
     }, []);
 
-
-
     const providerValues = useMemo(() => ({
         user,
         todos,
         loading,
     }), [user, todos, loading]);
-
 
     return (
         <TodoListControllerContext.Provider value={providerValues}>

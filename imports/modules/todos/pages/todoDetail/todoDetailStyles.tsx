@@ -5,12 +5,20 @@ import { SysSectionPaddingXY } from "/imports/ui/layoutComponents/sysLayoutCompo
 import { sysSizing } from '/imports/ui/materialui/styles';
 
 export default {
-	Container: styled(SysSectionPaddingXY)(() => ({
+	Container: styled(SysSectionPaddingXY, {
+		shouldForwardProp: (prop) => prop !== 'isDrawer',
+	})<{ isDrawer: boolean }>(({ theme, isDrawer }) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: sysSizing.spacingFixedLg,
+		maxWidth: '540px',
 		width: '540px',
-		padding: sysSizing.spacingFixedLg
+		padding: sysSizing.spacingFixedLg,
+		[theme.breakpoints.down('sm')]: {
+			padding: sysSizing.spacingFixedMd,
+			width: isDrawer ? '90vw' : '540px',
+			maxWidth: isDrawer ? '90vw' : '100%',
+		},
 	})),
 	DialogTitleContainer: styled(Box)(({ theme }) => ({
 		width: '100%',
@@ -23,7 +31,9 @@ export default {
 	FieldsForm: styled(Box)(({ theme }) => ({
 		display: 'flex',
 		gap: sysSizing.spacingFixedMd,
-		flexDirection: 'column'
+		flexDirection: 'column',
+		[theme.breakpoints.down('sm')]: {
+		}
 	})),
 	Actions: styled(Box)(({ theme }) => ({
 		display: 'flex',
@@ -32,7 +42,6 @@ export default {
 		padding: 0,
 		justifyContent: 'center'
 	})),
-
 	Title: styled(Typography, {
 		shouldForwardProp: (prop) => prop !== 'isCompleted',
 	})<{ isCompleted: boolean }>(({ theme, isCompleted }) => ({

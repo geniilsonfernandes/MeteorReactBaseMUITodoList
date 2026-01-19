@@ -1,43 +1,50 @@
 import { useTracker } from "meteor/react-meteor-data";
 import React, { useCallback, useContext } from "react";
 import { todoApi } from "../../api/todoApi";
+import TodoDeleteController from "../todoDelete/todoDeleteController";
 import TodoDetailView from "./todoDetailView";
 import AppLayoutContext, { IAppLayoutContext } from "/imports/app/appLayoutProvider/appLayoutContext";
 import { ITodo } from "/imports/modules/todos/api/todoSch";
 import { IMeteorError } from "/imports/typings/IMeteorError";
 import { ISchema } from "/imports/typings/ISchema";
+import { sysSizing } from "/imports/ui/materialui/styles";
 
 export interface ITodoDetailControllerContext {
     closeDialog: () => void;
     closeDrawer: () => void;
-    schema: ISchema<ITodo>;
-    doc: ITodo;
     onSubmit: (doc: ITodo) => void;
-    loading: boolean;
     onChangeFormMode: (mode: 'view' | 'edit' | 'create') => void;
     onChangeViewMode: (mode: 'view' | 'edit' | 'create') => void;
-    viewMode: 'create' | 'edit' | 'view';
-    formMode: 'create' | 'edit' | 'view';
     onChangeCompleted: (completed: "pending" | "completed") => void;
+    onDeleteTodo: (id?: string) => void;
+    schema: ISchema<ITodo>;
+    doc: ITodo;
+    loading: boolean;
+    formMode: 'create' | 'edit' | 'view';
+    viewMode: 'create' | 'edit' | 'view';
+    component: "dialog" | "drawer";
 }
 
 interface ITodoDetailController {
     mode: 'create' | 'edit' | 'view';
+    component: "dialog" | "drawer";
     id?: string;
+    isDelete?: boolean;
 }
 
 export const TodoDetailControllerContext = React.createContext<ITodoDetailControllerContext>(
     {} as ITodoDetailControllerContext
 );
 
-const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => {
+const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, component, isDelete }) => {
 
     const [viewMode, setViewMode] = React.useState<ITodoDetailController['mode']>(mode);
     const [formMode, setFormMode] = React.useState<ITodoDetailController['mode']>(mode);
 
-    const { closeDialog, showNotification, closeDrawer } = useContext<IAppLayoutContext>(AppLayoutContext);
+    const { closeDialog, showNotification, closeDrawer, showDialog } = useContext<IAppLayoutContext>(AppLayoutContext);
 
     const { loading, todoDetail } = useTracker(() => {
+        if (!id) return { loading: false, todoDetail: {} as ITodo };
         const filter = {
             _id: id
         }
@@ -62,14 +69,17 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
                 title: 'Operação não realizada!',
                 message: `Erro ao realizar a operação: api ${e.reason}`
             });
-            formMode === 'create' ? closeDialog() : onChangeFormMode('view');
+
+            console.log('component', component);
+            if (component === 'dialog') closeDialog();
+            if (component === 'drawer') onChangeFormMode('view');
             showNotification({
                 type: 'success',
                 title: 'Operação realizada!',
                 message: `A tarefa foi ${formMode === 'create' ? 'cadastrada' : 'atualizada'} com sucesso!`
             });
         });
-    }, [formMode, showNotification]);
+    }, [formMode, showNotification, component]);
 
 
     const onChangeCompleted = useCallback((completed: "pending" | "completed") => {
@@ -92,13 +102,18 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
 
 
 
-    const onChangeFormMode = (mode: ITodoDetailController['mode']) => {
-        setFormMode(mode);
+    const onDeleteTodo = (id?: string) => {
+        closeDrawer();
+        showDialog({
+            sx: { borderRadius: sysSizing.radiusMd, },
+            children: <TodoDeleteController id={id} />
+        });
     }
 
-    const onChangeViewMode = (mode: ITodoDetailController['mode']) => {
-        setViewMode(mode);
-    }
+
+
+    const onChangeFormMode = (mode: ITodoDetailController['mode']) => setFormMode(mode);
+    const onChangeViewMode = (mode: ITodoDetailController['mode']) => setViewMode(mode);
 
 
 
@@ -106,15 +121,17 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
         <TodoDetailControllerContext.Provider value={{
             closeDialog,
             closeDrawer,
-            schema: todoApi.getSchema(),
-            loading,
             onSubmit: onCreateOrUpdate,
-            doc: todoDetail,
             onChangeFormMode,
             onChangeViewMode,
+            onChangeCompleted,
+            onDeleteTodo,
+            schema: todoApi.getSchema(),
+            loading,
+            doc: todoDetail,
             viewMode,
             formMode,
-            onChangeCompleted
+            component
 
         }}>
             <TodoDetailView />

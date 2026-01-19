@@ -1,6 +1,6 @@
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { Box, Checkbox, IconButton, Stack } from '@mui/material';
+import { Box, Checkbox, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import React, { useContext, useRef } from 'react';
 import { ISysFormRef } from '../../../../ui/components/sysForm/typings';
@@ -15,15 +15,16 @@ import { SysSelectField } from '/imports/ui/components/sysFormFields/sysSelectFi
 
 const TodoDetailView = () => {
     const sysFormRef = useRef<ISysFormRef>(null);
-    const { closeDrawer, closeDialog, schema, doc, onSubmit, loading, viewMode, formMode, onChangeFormMode, onChangeCompleted } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
+    const { closeDrawer, closeDialog, schema, doc, onSubmit, loading, viewMode, formMode, onChangeFormMode, onChangeCompleted, onDeleteTodo, component } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
 
     const modeHeaderTitle = {
         "view": "",
         "edit": "Editar Tarefa",
-        "create": "Criar Tarefa"
+        "create": "Criar Tarefa",
+        "delete": "Excluir Tarefa"
     }
 
-    if (loading) return <styles.Container>
+    if (loading) return <styles.Container isDrawer={component === 'drawer'}>
         <styles.DialogTitleContainer>
             <DialogTitle variant="subtitle1" sx={{ padding: 0 }}>
                 {modeHeaderTitle[viewMode]}
@@ -33,24 +34,30 @@ const TodoDetailView = () => {
                     <SysIcon name="close" />
                 </IconButton>
             </Stack>
+
         </styles.DialogTitleContainer>
+        <Stack spacing={1} alignItems="center" justifyContent="center" minHeight="50vh">
+            <CircularProgress />
+            <Typography variant="body1">Aguarde, carregando informações...</Typography>
+        </Stack>
     </styles.Container>
 
+
     return (
-        <styles.Container>
-            <styles.DialogTitleContainer>
+        <styles.Container aria-label="todo detail form" isDrawer={component === 'drawer'}>
+            <styles.DialogTitleContainer aria-label="todo detail form title">
                 <DialogTitle variant="subtitle1" sx={{ padding: 0 }}>
                     {modeHeaderTitle[viewMode]}
                 </DialogTitle>
                 <Stack direction="row" spacing={1} alignItems="center">
-                    {viewMode === 'view' && <TodoItemMenu onEdit={() => onChangeFormMode('edit')} onDelete={() => { }} />}
+                    {viewMode === 'view' && <TodoItemMenu onEdit={() => onChangeFormMode('edit')} onDelete={() => onDeleteTodo(doc._id)} />}
                     <IconButton onClick={viewMode === 'view' ? closeDrawer : closeDialog}>
                         <SysIcon name="close" />
                     </IconButton>
                 </Stack>
             </styles.DialogTitleContainer>
-            <SysForm schema={schema} doc={doc} mode={formMode} onSubmit={onSubmit} ref={sysFormRef} loading={loading} >
-                <styles.FieldsForm>
+            <SysForm schema={schema} doc={doc} mode={formMode} onSubmit={onSubmit} ref={sysFormRef} loading={loading} aria-label="todo detail form">
+                <styles.FieldsForm aria-label="form fields">
                     {formMode === 'view' && <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Checkbox
                             icon={<RadioButtonUncheckedIcon />}
@@ -62,9 +69,11 @@ const TodoDetailView = () => {
                         <styles.Title isCompleted={doc?.completed === "completed"}>{doc?.title}</styles.Title>
                     </Box>}
                     <Box sx={{ display: formMode === 'view' ? 'none' : 'flex' }}>
-                        <SysTextField name="title" placeholder="Digite o título da tarefa" />
+                        <SysTextField
+                            name="title" placeholder="Digite o título da tarefa" />
                     </Box>
-                    <SysTextField name="description" placeholder="Digite a descrição da tarefa" multiline rows={6} />
+                    <SysTextField
+                        name="description" placeholder="Digite a descrição da tarefa" multiline rows={6} />
                     <SysSelectField name="completed" placeholder="Selecionar" />
                     <styles.Actions>
                         <SysFormButton startIcon={<SysIcon name={'check'} />}>Salvar</SysFormButton>
