@@ -79,8 +79,8 @@ const UserTodoListController: React.FC = () => {
 
     const { loading, todos } = useTracker(() => {
         const filter = {
-            owner: user?._id,
-            // assignee: user?._id,
+            assignee: user?._id,
+
             $or: [
                 { title: { $regex: search, $options: 'i' } },
                 { description: { $regex: search, $options: 'i' } },
