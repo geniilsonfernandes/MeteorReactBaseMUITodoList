@@ -50,7 +50,7 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
     }, [id]);
 
 
-    const onSubmit = useCallback((doc: ITodo) => {
+    const onCreateOrUpdate = useCallback((doc: ITodo) => {
         const modes = {
             "create": todoApi.insert,
             "edit": todoApi.update,
@@ -108,7 +108,7 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id }) => 
             closeDrawer,
             schema: todoApi.getSchema(),
             loading,
-            onSubmit,
+            onSubmit: onCreateOrUpdate,
             doc: todoDetail,
             onChangeFormMode,
             onChangeViewMode,

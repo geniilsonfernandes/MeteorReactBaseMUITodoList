@@ -1,18 +1,11 @@
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-import { ElementType } from 'react';
 import { SysSectionPaddingXY } from "/imports/ui/layoutComponents/sysLayoutComponents";
 import { sysSizing } from '/imports/ui/materialui/styles';
 
-interface IUserTodoListStyles {
-	Container: ElementType<BoxProps>;
-	Header: ElementType<BoxProps>;
-	AccordionHeader: ElementType<BoxProps>;
-	AccordionTitle: ElementType<BoxProps>;
-	AccordionPanel: ElementType<BoxProps>;
-}
 
-const UserTodoListStyles: IUserTodoListStyles = {
+
+export default {
 	Container: styled(SysSectionPaddingXY)(() => ({
 		width: '100%',
 		flex: 1,
@@ -53,4 +46,3 @@ const UserTodoListStyles: IUserTodoListStyles = {
 	})),
 };
 
-export default UserTodoListStyles;

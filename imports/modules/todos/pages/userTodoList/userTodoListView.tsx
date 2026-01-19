@@ -8,15 +8,6 @@ import { SysFab } from '/imports/ui/components/sysFab/sysFab';
 import SysIcon from '/imports/ui/components/sysIcon/sysIcon';
 import { SysTabs } from '/imports/ui/components/sysTabs/sysTabs';
 
-const mockTodosData = [
-    { id: '1', title: 'Elaborar roteiro do grupo focal', createdBy: 'Você', isCompleted: false },
-    { id: '2', title: 'Realizar atividade', createdBy: 'Você', isCompleted: false },
-    { id: '3', title: 'Fazer reunião de alinhamento', createdBy: 'Jonathan Smith', isCompleted: true },
-    { id: '4', title: 'Definir prazos', createdBy: 'Jane Doe', isCompleted: true },
-    { id: '5', title: 'Definir prazos', createdBy: 'Jane Doe', isCompleted: true },
-    { id: '6', title: 'Definir prazos', createdBy: 'Jane Doe', isCompleted: true },
-];
-
 
 type ExpandedType = {
     pendingTodos: boolean,
@@ -24,7 +15,7 @@ type ExpandedType = {
 }
 
 const UserTodoListView: React.FC = () => {
-    const { todos, loading, ...controller } = useContext<IUserTodoListControllerContext>(UserTodoListControllerContext);
+    const { todos, loading, onChangeCompleted, ...controller } = useContext<IUserTodoListControllerContext>(UserTodoListControllerContext);
     const { Container, Header, AccordionHeader, AccordionTitle, AccordionPanel, } = UserTodoListStyles;
 
     const completedTodos = React.useMemo(() => todos.filter(todo => todo.completed === 'completed'), [todos]);
@@ -88,13 +79,13 @@ const UserTodoListView: React.FC = () => {
 
                                 <Collapse in={expanded.pendingTodos} timeout="auto" unmountOnExit>
                                     <AccordionPanel>
-                                        {pendingTodos.map((todo) => (
+                                        {pendingTodos && pendingTodos.map((todo) => (
                                             <TodoItem
                                                 key={todo._id}
                                                 title={todo.title}
                                                 createdBy={todo.owner}
                                                 isCompleted={todo.completed === 'completed'}
-                                                onToggle={() => { }}
+                                                onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
                                                 onClick={() => controller.onShowDetailTodo(todo._id)}
                                             />
                                         ))}
@@ -102,13 +93,7 @@ const UserTodoListView: React.FC = () => {
                                 </Collapse>
                             </Box>
                         ) : (
-                            <Box
-                                sx={{
-                                    padding: 3,
-                                    textAlign: 'left',
-                                    color: 'text.secondary'
-                                }}
-                            >
+                                <Box>
                                 🎉 Nenhuma tarefa pendente!
                                 <br />
                                 Aproveite o tempo livre ou crie uma nova tarefa.
@@ -134,7 +119,7 @@ const UserTodoListView: React.FC = () => {
                                                 title={todo.title}
                                                 createdBy={todo.owner}
                                                 isCompleted={todo.completed === 'completed'}
-                                                onToggle={() => { }}
+                                                onToggle={() => onChangeCompleted(todo._id || '', todo.completed === 'completed' ? 'pending' : 'completed')}
                                                 onClick={() => controller.onShowDetailTodo(todo._id)}
                                             />
                                         ))}

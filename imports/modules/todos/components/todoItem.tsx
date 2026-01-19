@@ -68,8 +68,12 @@ const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onT
             <Checkbox
                 icon={<RadioButtonUncheckedIcon />}
                 checkedIcon={<CheckCircleIcon />}
+                onClick={(e) => e.stopPropagation()}
                 checked={isCompleted}
-                onChange={onToggle}
+                onChange={(e) => {
+                    e.stopPropagation();
+                    if (onToggle) onToggle();
+                }}
                 sx={{ p: 0 }}
             />
             <TextContainer>

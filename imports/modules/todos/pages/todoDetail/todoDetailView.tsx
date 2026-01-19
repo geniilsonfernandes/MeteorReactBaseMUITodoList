@@ -51,17 +51,17 @@ const TodoDetailView = () => {
             </styles.DialogTitleContainer>
             <SysForm schema={schema} doc={doc} mode={formMode} onSubmit={onSubmit} ref={sysFormRef} loading={loading} >
                 <styles.FieldsForm>
-                    {formMode !== 'edit' && <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {formMode === 'view' && <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Checkbox
                             icon={<RadioButtonUncheckedIcon />}
                             checkedIcon={<CheckCircleIcon />}
-                            checked={doc.completed === "completed"}
+                            checked={doc?.completed === "completed"}
                             onChange={(e) => onChangeCompleted(e.target.checked ? "completed" : "pending")}
                             sx={{ p: 0 }}
                         />
-                        <styles.Title isCompleted={doc.completed === "completed"}>{doc.title}</styles.Title>
+                        <styles.Title isCompleted={doc?.completed === "completed"}>{doc?.title}</styles.Title>
                     </Box>}
-                    <Box sx={{ display: formMode === 'edit' ? 'flex' : 'none' }}>
+                    <Box sx={{ display: formMode === 'view' ? 'none' : 'flex' }}>
                         <SysTextField name="title" placeholder="Digite o título da tarefa" />
                     </Box>
                     <SysTextField name="description" placeholder="Digite a descrição da tarefa" multiline rows={6} />

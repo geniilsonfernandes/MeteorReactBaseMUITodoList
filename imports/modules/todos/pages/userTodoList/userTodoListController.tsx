@@ -8,6 +8,7 @@ import TodoDetailController from "../todoDetail/todoDetailController";
 import UserTodoListView from "./userTodoListView";
 import AppLayoutContext, { IAppLayoutContext } from "/imports/app/appLayoutProvider/appLayoutContext";
 import AuthContext from "/imports/app/authProvider/authContext";
+import { IMeteorError } from "/imports/typings/IMeteorError";
 import { sysSizing } from "/imports/ui/materialui/styles";
 
 
@@ -24,6 +25,9 @@ export interface IUserTodoListControllerContext {
     closeDialog: () => void
     onShowDetailTodo: (id?: string) => void
 
+    // metodos
+    onChangeCompleted: (id: string, completed: "pending" | "completed") => void
+
     // 
     todos: ITodo[]
     loading: boolean
@@ -34,7 +38,7 @@ export const UserTodoListControllerContext = React.createContext<IUserTodoListCo
 );
 
 const UserTodoListController: React.FC = () => {
-    const { showDialog, closeDialog, showDrawer } = useContext<IAppLayoutContext>(AppLayoutContext);
+    const { showDialog, closeDialog, showDrawer, showNotification } = useContext<IAppLayoutContext>(AppLayoutContext);
     const { user } = useContext(AuthContext);
 
     const navigate = useNavigate();
@@ -56,7 +60,6 @@ const UserTodoListController: React.FC = () => {
 
     const onShowDetailTodo = (id?: string) => {
 
-        console.log("onShowDetailTodo id", id);
 
         if (!id) return;
         showDrawer({
@@ -71,7 +74,6 @@ const UserTodoListController: React.FC = () => {
         const filter = {
             owner: user?._id
         }
-
         const subHandle = todoApi.subscribe('todoList', filter);
         const todos = subHandle?.ready() ? todoApi.find(filter).fetch() : [];
         return {
@@ -79,6 +81,28 @@ const UserTodoListController: React.FC = () => {
             loading: !!subHandle && !subHandle.ready(),
         };
     }, [user]);
+
+
+    const onChangeCompleted = useCallback((id: string, completed: "pending" | "completed") => {
+        const newDoc = { ...todos.find((todo) => todo._id === id), completed };
+        if (!newDoc) return;
+        todoApi.update(newDoc, (e: IMeteorError) => {
+            if (e) return showNotification({
+                type: 'error',
+                title: 'Erro ao alterar status',
+                message: `Erro ao realizar a operação: api ${e.reason}`
+            });
+
+            showNotification({
+                type: 'success',
+                title: 'Status alterado!',
+                message: `Status da tarefa alterado para ${completed === 'completed' ? 'Concluído' : 'Pendente'}`
+            });
+
+        });
+    }, [todos, showNotification]);
+
+
 
 
     const providerValues = useMemo(() => ({
@@ -90,7 +114,8 @@ const UserTodoListController: React.FC = () => {
         closeDialog,
         onShowDetailTodo,
         todos,
-        loading
+        loading,
+        onChangeCompleted
     }), [tabValue, todos, user]);
 
     return (
