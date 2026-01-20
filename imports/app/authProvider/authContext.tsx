@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import { createContext } from 'react';
 import { IUserProfile } from '/imports/modules/userprofile/api/userProfileSch';
 import { IMeteorError } from '/imports/typings/IMeteorError';
 
@@ -8,6 +8,7 @@ interface IAuthContext {
     userLoading: boolean;
     logout: (callback: () => void) => void;
     signIn: (email: string, password: string, callback: (err?: IMeteorError) => void) => void;
+    signUp: (username: string, email: string, password: string, callback: (err?: IMeteorError) => void) => void;
 }
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);

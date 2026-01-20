@@ -1,19 +1,20 @@
 // region Imports
-import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import { IMeteorUser, IUserProfile, userProfileSch } from './userProfileSch';
-import { userprofileData } from '../../../libs/getUser';
-import settings from '../../../../settings.json';
 import { check } from 'meteor/check';
+import { Meteor } from 'meteor/meteor';
+import { nanoid } from 'nanoid';
+import settings from '../../../../settings.json';
+import { ProductServerBase } from '../../../api/productServerBase';
+import { userprofileData } from '../../../libs/getUser';
 import { IContext } from '../../../typings/IContext';
 import { IDoc } from '../../../typings/IDoc';
-import { ProductServerBase } from '../../../api/productServerBase';
 import { EnumUserRoles } from './enumUser';
-import { nanoid } from 'nanoid';
+import { IMeteorUser, IUserProfile, userProfileSch } from './userProfileSch';
 import User = Meteor.User;
 
 interface IUserProfileEstendido extends IUserProfile {
 	password?: string;
+
 }
 
 /**
@@ -72,6 +73,9 @@ class UserProfileServerApi extends ProductServerBase<IUserProfile> {
 
 		this.registerMethod('sendVerificationEmail', async (userData: IUserProfile) => {
 			check(userData, Object);
+
+			console.log('userData :>> sendVerificationEmail ', userData);
+
 			if (Meteor.isServer && userData) {
 				if (userData._id) {
 					Accounts.sendVerificationEmail(userData._id);
@@ -142,13 +146,13 @@ class UserProfileServerApi extends ProductServerBase<IUserProfile> {
 		if (Meteor.isServer) {
 			if (userprofile.password) {
 				userprofile._id = await Accounts.createUser({
-					username: userprofile.email,
+					username: userprofile.username,
 					password: userprofile.password,
 					email: userprofile.email
 				});
 			} else {
 				userprofile._id = await Accounts.createUser({
-					username: userprofile.email,
+					username: userprofile.username,
 					email: userprofile.email
 				});
 			}
