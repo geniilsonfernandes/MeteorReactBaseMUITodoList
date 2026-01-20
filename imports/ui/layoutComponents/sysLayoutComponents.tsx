@@ -1,8 +1,8 @@
-import React, { ElementType } from 'react';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import { sysSizing } from '../materialui/styles';
+import { styled } from '@mui/material/styles';
 import Typography, { TypographyProps } from '@mui/material/Typography';
+import { ElementType } from 'react';
+import { sysSizing } from '../materialui/styles';
 
 export interface ITextOverflow extends Omit<TypographyProps, 'ref'> {
   maxLines?: string;

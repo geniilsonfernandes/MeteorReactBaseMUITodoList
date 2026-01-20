@@ -7,22 +7,21 @@ export const todosRouterList: (IRoute | null)[] = [
 		path: '/todos/:screenState/:todoId',
 		component: TodoContainer,
 		isProtected: true,
-		resources: [Recurso.TODO_VIEW]
+		resources: [Recurso.TODO_VIEW],
+		templateVariant: 'Todo'
 	},
 	{
 		path: '/todos/:screenState',
 		component: TodoContainer,
 		isProtected: true,
-		resources: [Recurso.TODO_CREATE]
+		resources: [Recurso.TODO_CREATE],
+		templateVariant: 'Todo'
 	},
 	{
-		path: '/todos',
+		path: '/',
 		component: TodoContainer,
 		isProtected: true,
 		resources: [Recurso.TODO_VIEW],
-		templateProps: {
-			logo: 'Todo List',
-		}
-
+		templateVariant: 'Todo'
 	},
 ];

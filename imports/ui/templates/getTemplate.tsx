@@ -1,19 +1,22 @@
 import React, { ReactNode } from 'react';
+import { NavigateFunction } from 'react-router-dom';
+import { IAppMenu } from '../../modules/modulesTypings';
 import { TemplateAppBar } from './templateAppBar/templateAppBar';
 import TemplateNone from './templateNone/templateNone';
-import { IAppMenu } from '../../modules/modulesTypings';
-import { NavigateFunction } from 'react-router-dom';
+import TemplateTodo from './templateTodo/templateTodo';
 
 //important: A definição do template default da aplicação é feita no aquivo /imports/app/appLayout.tsx
 
 export enum SysTemplateOptions {
 	AppBar = 'AppBar',
-	None = 'None'
+	None = 'None',
+	Todo = 'Todo'
 }
 
 const templates = {
 	[SysTemplateOptions.AppBar]: TemplateAppBar,
-	[SysTemplateOptions.None]: TemplateNone
+	[SysTemplateOptions.None]: TemplateNone,
+	[SysTemplateOptions.Todo]: TemplateTodo
 };
 
 export interface ISysTemplate {

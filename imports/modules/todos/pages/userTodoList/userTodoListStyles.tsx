@@ -7,13 +7,15 @@ import { sysSizing } from '/imports/ui/materialui/styles';
 
 export default {
 	Container: styled(SysSectionPaddingXY)(() => ({
-		width: '100%',
-		flex: 1,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		gap: sysSizing.spacingFixedLg
+		width: '100%',
+		height: '100vh',
+		overflow: 'auto',
+		gap: sysSizing.spacingFixedMd,
+		marginBottom: sysSizing.contentFabDistance
 	})),
 	Header: styled(Box)({
 		display: 'flex',

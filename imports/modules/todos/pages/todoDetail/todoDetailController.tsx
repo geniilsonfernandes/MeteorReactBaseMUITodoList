@@ -70,7 +70,6 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
                 message: `Erro ao realizar a operação: api ${e.reason}`
             });
 
-            console.log('component', component);
             if (component === 'dialog') closeDialog();
             if (component === 'drawer') onChangeFormMode('view');
             showNotification({
@@ -90,13 +89,11 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
                 title: 'Erro ao alterar status',
                 message: `Erro ao realizar a operação: api ${e.reason}`
             });
-
             showNotification({
                 type: 'success',
                 title: 'Status alterado!',
                 message: `Status da tarefa alterado para ${completed === 'completed' ? 'Concluído' : 'Pendente'}`
             });
-
         });
     }, [todoDetail, showNotification]);
 
@@ -132,7 +129,6 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
             viewMode,
             formMode,
             component
-
         }}>
             <TodoDetailView />
         </TodoDetailControllerContext.Provider>
