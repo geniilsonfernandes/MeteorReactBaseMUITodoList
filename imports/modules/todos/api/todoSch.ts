@@ -2,6 +2,22 @@ import { IUserProfile } from '../../userprofile/api/userProfileSch';
 import { IDoc } from '/imports/typings/IDoc';
 import { ISchema } from '/imports/typings/ISchema';
 
+
+export const completedOptions = {
+	pending: {
+		label: 'Pendente',
+		value: 'pending'
+	},
+	completed: {
+		label: 'Concluído',
+		value: 'completed'
+	},
+	canceled: {
+		label: 'Cancelado',
+		value: 'canceled'
+	}
+}
+
 export const todoSch: ISchema<ITodo> = {
 	title: {
 		type: String,
@@ -22,21 +38,12 @@ export const todoSch: ISchema<ITodo> = {
 	completed: {
 		type: String,
 		label: 'Concluído',
-		defaultValue: 'pending',
+		defaultValue: completedOptions.pending.label,
 		optional: true,
 		options: () => [
-			{
-				value: 'completed',
-				label: 'Concluído'
-			},
-			{
-				value: 'pending',
-				label: 'Pendente'
-			},
-			{
-				value: 'canceled',
-				label: 'Cancelado'
-			}
+			completedOptions.completed,
+			completedOptions.pending,
+			completedOptions.canceled
 		]
 	},
 	assignee: {

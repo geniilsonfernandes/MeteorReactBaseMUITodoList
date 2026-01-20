@@ -13,6 +13,7 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 	constructor() {
 		super('todo', todoSch, { resources: Recurso });
 		this.afterUpdate = this.afterUpdate.bind(this);
+		this.beforeInsert = this.beforeInsert.bind(this);
 
 		this.addTransformedPublication(
 			'todoList',
@@ -53,8 +54,6 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 				isOwner: doc.owner === userId || doc.assignee === userId
 			};
 		});
-
-
 	}
 
 
@@ -77,6 +76,16 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 		}
 	}
 
+	async beforeInsert(_docObj: ITodo | Partial<ITodo>, _context: IContext) {
+		const result = await super.beforeInsert(_docObj, _context);
+		if (!result) return false;
+
+		_docObj.assignee = _context.user._id;
+		_docObj.owner = _context.user._id;
+
+		return true;
+	}
+
 
 }
 
@@ -85,3 +94,5 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 // cria um seed com 3 todos exemplo
 
 export const todoServerApi = new TodoServerApi();
+
+

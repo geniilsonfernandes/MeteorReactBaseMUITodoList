@@ -58,12 +58,19 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
 
 
     const onCreateOrUpdate = useCallback((doc: ITodo) => {
+        const sanitizeCompleted = ["pending", "completed", "canceled"].includes(doc.completed);
+
+        const newDoc = {
+            ...doc,
+            completed: sanitizeCompleted ? doc.completed : "pending"
+        };
+
         const modes = {
             "create": todoApi.insert,
             "edit": todoApi.update,
             "view": todoApi.update
         }
-        modes[formMode](doc, (e: IMeteorError) => {
+        modes[formMode](newDoc, (e: IMeteorError) => {
             if (e) return showNotification({
                 type: 'error',
                 title: 'Operação não realizada!',
