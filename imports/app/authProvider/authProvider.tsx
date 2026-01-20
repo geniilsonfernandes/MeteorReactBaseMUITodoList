@@ -3,11 +3,10 @@ import { useTracker } from 'meteor/react-meteor-data';
 import React, { ReactNode, useCallback } from 'react';
 import { parse, stringify } from 'zipson';
 import settings from '../../../settings.json';
-import AuthContext, { IAuthContext } from './authContext';
+import AuthContext, { IAuthCallback, IAuthContext } from './authContext';
 import { hasValue } from '/imports/libs/hasValue';
 import { userprofileApi } from '/imports/modules/userprofile/api/userProfileApi';
 import { IUserProfile } from '/imports/modules/userprofile/api/userProfileSch';
-import { IMeteorError } from '/imports/typings/IMeteorError';
 
 const accountStore = createStore(`${settings.name}_UserAccount`, 'store');
 const cachedUser = new ReactiveVar(null);
@@ -60,24 +59,28 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const handleSignIn = useCallback((
     email: string,
     password: string,
-    callBack: (error: IMeteorError) => void
+    callBack: IAuthCallback
   ) => {
-    Meteor.loginWithPassword(email, password, (error) => callBack(error as IMeteorError));
+    Meteor.loginWithPassword(email, password, (error) => {
+      if (error) {
+        callBack.onError(error);
+      } else {
+        callBack.onSuccess();
+      }
+    });
   }, []);
 
   const handleSignUp = useCallback((
     username: string,
     email: string,
     password: string,
-    callBack: (error: IMeteorError) => void
+    callBack: IAuthCallback
   ) => {
     userprofileApi.insertNewUser({ username, email, password }, (err: any) => {
       if (err) {
-
-
-        callBack(err as IMeteorError);
+        callBack.onError(err);
       } else {
-        Meteor.loginWithPassword(email, password, (error) => callBack(error as IMeteorError));
+        callBack.onSuccess();
       }
     })
   }, []);

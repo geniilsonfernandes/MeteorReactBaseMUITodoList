@@ -13,8 +13,6 @@ const TodoListView: React.FC = () => {
     const { user, todos, loading, ...controller } = useContext(TodoListControllerContext);
 
     const userName = user?.username || 'Usuário';
-
-
     return (
         <styles.Container>
             <styles.HeaderContainer>

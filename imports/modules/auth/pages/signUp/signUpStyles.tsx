@@ -18,6 +18,7 @@ const SignInStyles = {
 
 	FormWrapper: styled(Box)(({ theme }) => ({
 		maxWidth: '500px',
+		width: '100%',
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'center',

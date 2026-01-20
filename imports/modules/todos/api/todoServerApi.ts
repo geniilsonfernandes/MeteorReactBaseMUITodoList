@@ -23,6 +23,10 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 				const assigneeProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.assignee });
 
 				const userId = await Meteor.userId();
+
+
+				console.log(userId);
+
 				return {
 					...doc,
 					owner_data: userProfileDoc,
@@ -39,6 +43,10 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 			const assigneeProfileDoc = await userprofileServerApi.getCollectionInstance().findOneAsync({ _id: doc.assignee });
 
 			const userId = await Meteor.userId();
+
+
+
+
 			return {
 				...doc,
 				owner_data: userProfileDoc,

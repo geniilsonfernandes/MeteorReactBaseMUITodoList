@@ -1,19 +1,9 @@
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-import { ElementType } from 'react';
 import { SysSectionPaddingXY } from "/imports/ui/layoutComponents/sysLayoutComponents";
 import { sysSizing } from '/imports/ui/materialui/styles';
 
-interface ITodoListStyles {
-    Container: ElementType<BoxProps>;
-    HeaderContainer: ElementType<BoxProps>;
-    HeaderTitle: ElementType<BoxProps>;
-    HeaderSubtitle: ElementType<BoxProps>;
-    SectionTitle: ElementType<BoxProps>;
-    ListContainer: ElementType<BoxProps>;
-}
-
-const TodoListStyles: ITodoListStyles = {
+export default {
     Container: styled(SysSectionPaddingXY)(() => ({
         display: 'flex',
         flexDirection: 'column',
@@ -23,7 +13,8 @@ const TodoListStyles: ITodoListStyles = {
         height: '100vh',
         overflow: 'auto',
         gap: sysSizing.spacingFixedMd,
-        marginBottom: sysSizing.contentFabDistance
+        marginBottom: sysSizing.contentFabDistance,
+        marginTop: 200,
     })),
     HeaderContainer: styled(Box)(({ theme }) => ({
         display: 'flex',
@@ -38,7 +29,7 @@ const TodoListStyles: ITodoListStyles = {
         fontWeight: 'bold',
         fontSize: '2rem',
     })),
-     HeaderSubtitle: styled(Box)(({ theme }) => ({
+    HeaderSubtitle: styled(Box)(({ theme }) => ({
         fontSize: '1rem',
         color: theme.palette.text.secondary,
         marginTop: theme.spacing(1),
@@ -50,13 +41,10 @@ const TodoListStyles: ITodoListStyles = {
     })),
 
 
-    // ListStyles
-    
     ListContainer: styled(Box)(({ theme }) => ({
-        width: '100%', 
-        display: 'flex', 
+        width: '100%',
+        display: 'flex',
         flexDirection: 'column',
     })),
 };
 
-export default TodoListStyles;

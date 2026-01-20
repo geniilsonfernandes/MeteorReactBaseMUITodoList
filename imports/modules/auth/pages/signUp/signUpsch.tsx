@@ -9,6 +9,10 @@ export const signUpSchema: ISchema<ISignUp> = {
 		label: 'Usuário',
 		optional: false,
 		defaultValue: 'admin@mrb.com',
+		validationFunction: (value: string) => {
+			if (value.includes(' ')) return 'Usuário não pode conter espaços';
+			return undefined;
+		}
 	},
 	email: {
 		type: 'String',

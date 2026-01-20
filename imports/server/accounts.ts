@@ -1,12 +1,12 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
+import req from 'request';
 import { userprofileServerApi } from '../modules/userprofile/api/userProfileServerApi';
 import { getHTMLEmailTemplate } from './email';
-import req from 'request';
 
 // @ts-ignore
-import settings from '/settings';
 import { Mongo } from 'meteor/mongo';
+import settings from '../../settings.json';
 
 function getBase64FromURLImage(
 	urlImage: string,
@@ -125,36 +125,34 @@ Meteor.startup(() => {
 	Accounts.emailTemplates.verifyEmail.subject = () => {
 		return settings.name;
 	};
-	Accounts.emailTemplates.verifyEmail.html = (user, url) => {
-		const urlWithoutHash = url.replace('#/', '');
-		const userData = userprofileServerApi.findOne({ _id: user._id }) || {};
-		const email =
-			`${
-				`<p>Olá ${userData.username || 'usuário'},</p>` +
-				'<p>Seja bem vindo ao &nbsp;<strong>MeteorReactBase-MUI</strong>.</p>' +
-				'<p>Para confirmar seu cadastro clique no link abaixo:</p>' +
-				'<p><ins><a href='
-			}${urlWithoutHash}>${urlWithoutHash}</a></ins></p>` +
-			'<p>Ficamos felizes com o seu cadastro.</p>' +
-			'<p><br/>Equipe <b>MeteorReactBase-MUI</b></p>';
-		const footer = `Essa mensagem foi gerada automaticamente!`;
-		return getHTMLEmailTemplate('Confirmação do cadastro', email, footer);
-	};
+
 
 	Accounts.emailTemplates.enrollAccount.subject = () => {
 		return settings.name;
 	};
+
+	/// TEMPLATE NOVO
+	Accounts.emailTemplates.verifyEmail.html = (user, url) => {
+		const urlWithoutHash = url.replace('#/', '');
+		return `<p>Olá ${user.username || 'usuário'},</p>` +
+			'<p>Seja bem vindo ao &nbsp;<strong>MeteorReactBase-MUI</strong>.</p>' +
+			'<p>Para confirmar seu cadastro clique no link abaixo:</p>' +
+			'<p><ins><a href=' + urlWithoutHash + '>Confirmar cadastro</a></ins></p>' +
+			'<p>Ficamos felizes com o seu cadastro.</p>' +
+			'<p><br/>Equipe <b>MeteorReactBase-MUI</b></p>';
+	};
+
+
 
 	Accounts.emailTemplates.enrollAccount.html = (user, url) => {
 		const urlWithoutHash = url.replace('#/', '');
 		const userData = userprofileServerApi.findOne({ _id: user._id }) || {};
 
 		const email =
-			`${
-				`<p>Olá ${userData.username || 'usuário'},</p>` +
-				'<p>Seja bem vindo ao &nbsp;<strong>MeteorReactBase-MUI</strong>.</p>' +
-				'<p>Para concluir seu cadastro clique no link abaixo e informe uma senha:</p>' +
-				'<p><ins><a href='
+			`${`<p>Olá ${userData.username || 'usuário'},</p>` +
+			'<p>Seja bem vindo ao &nbsp;<strong>MeteorReactBase-MUI</strong>.</p>' +
+			'<p>Para concluir seu cadastro clique no link abaixo e informe uma senha:</p>' +
+			'<p><ins><a href='
 			}${urlWithoutHash}>${urlWithoutHash}</a></ins></p>` +
 			'<p>Ficamos felizes com o seu cadastro.</p>' +
 			'<p><br/>Equipe <b>MeteorReactBase-MUI</b></p>';
@@ -172,11 +170,10 @@ Meteor.startup(() => {
 		const userData = userprofileServerApi.findOne({ _id: user._id }) || {};
 		const urlWithoutHash = url.replace('#/', '');
 		const email =
-			`${
-				`<p>Olá ${userData.username || 'usuário'},</p>` +
-				'<p>Sua senha de acesso ao <strong>MeteorReactBase-MUI</strong> será alterada.</p>' +
-				'<p>Clique no link abaixo e informe uma nova senha:</p>' +
-				'<p><ins><a href='
+			`${`<p>Olá ${userData.username || 'usuário'},</p>` +
+			'<p>Sua senha de acesso ao <strong>MeteorReactBase-MUI</strong> será alterada.</p>' +
+			'<p>Clique no link abaixo e informe uma nova senha:</p>' +
+			'<p><ins><a href='
 			}${urlWithoutHash}>${urlWithoutHash}</a></ins></p>` +
 			'<p></p>' +
 			'<p><br/>Equipe <b>MeteorReactBase-MUI</b></p>';
@@ -240,7 +237,7 @@ Meteor.startup(() => {
 			return validateLoginGoogle(user);
 		}
 		if (!user || !user.emails || !user.emails[0].verified) {
-			throw new Meteor.Error('Email ñao verificado', `Este email ainda não foi verificado!`);
+			throw new Meteor.Error('Email ñao verificado', `Este email ainda não foi verificado!`, `Este email ainda não foi verificado!`);
 		}
 		return true;
 	});

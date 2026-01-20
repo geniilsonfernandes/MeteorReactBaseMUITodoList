@@ -11,7 +11,7 @@ const TemplateTodo: React.FC<ITemplateTodo> = ({ children }) => {
         <Box sx={{ backgroundColor: 'white', width: '100%', position: 'fixed', top: 0, zIndex: 1000, left: 0, right: 0, boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <SimpleAppBarController />
         </Box>
-        <Box sx={{ marginTop: '220px', display: 'flex', flexDirection: 'column', width: "100vw" }}>{children}</Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: "100vw" }}>{children}</Box>
     </Box>
 };
 

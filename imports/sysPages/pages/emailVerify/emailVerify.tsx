@@ -1,35 +1,98 @@
-import React from 'react';
+import { Alert, Box, Button, CircularProgress, Typography } from '@mui/material';
 import { Accounts } from 'meteor/accounts-base';
-import { useParams } from 'react-router-dom';
-import { IDefaultContainerProps } from '/imports/typings/BoilerplateDefaultTypings';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-let emailVerified = false;
-
-export const EmailVerify = (props: IDefaultContainerProps) => {
+export const EmailVerify = () => {
 	const { token } = useParams();
+	const navigate = useNavigate();
 
-	const { showNotification, navigate } = props;
+	const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+	const [errorMessage, setErrorMessage] = useState('');
+	const [countdown, setCountdown] = useState(3);
 
-	Accounts.verifyEmail(token!, (err: any) => {
-		if (err) {
-			if (!emailVerified) {
-				props.showNotification({
-					type: 'warning',
-					title: 'Problema com o Token!',
-					description: 'Email não verificado. Solicite um novo token!'
-				});
-				navigate('/');
-			}
-		} else {
-			emailVerified = true;
-			showNotification({
-				type: 'success',
-				title: 'Email Verificado',
-				description: 'Seu e-mail foi verificado com sucesso, seja bem vindo!'
-			});
-			navigate('/');
+	useEffect(() => {
+		if (!token) {
+			setStatus('error');
+			setErrorMessage('Token inválido.');
+			return;
 		}
-	});
 
-	return <></>;
+		Accounts.verifyEmail(token, (err) => {
+			if (err) {
+				setStatus('error');
+				setErrorMessage(err.message || 'Erro ao verificar o e-mail.');
+			} else {
+				setStatus('success');
+			}
+		});
+	}, [token]);
+
+	useEffect(() => {
+		if (status !== 'success') return;
+
+		if (countdown === 0) {
+			navigate('/');
+			return;
+		}
+
+		const timer = setTimeout(() => {
+			setCountdown((prev) => prev - 1);
+		}, 1000);
+
+		return () => clearTimeout(timer);
+	}, [status, countdown, navigate]);
+
+	return (
+		<Box
+			display="flex"
+			flexDirection="column"
+			alignItems="center"
+			justifyContent="center"
+			height="100vh"
+			marginX="auto"
+			textAlign="center"
+			p={2}
+		>
+			{status === 'loading' && (
+				<>
+					<CircularProgress />
+					<Typography variant="h6" mt={2}>
+						Verificando seu e-mail...
+					</Typography>
+				</>
+			)}
+
+			{status === 'success' && (
+				<>
+					<Typography variant="h4" color="success.main" mb={2}>
+						✅ E-mail verificado!
+					</Typography>
+
+					<Typography variant="body1" mb={1}>
+						Seu e-mail foi verificado com sucesso.
+					</Typography>
+
+					<Typography variant="body2" color="text.secondary" mb={3}>
+						Você será redirecionado para a página inicial em {countdown} segundos...
+					</Typography>
+
+					<Button variant="contained" color="primary" onClick={() => navigate('/')}>
+						Ir agora
+					</Button>
+				</>
+			)}
+
+			{status === 'error' && (
+				<>
+					<Alert severity="error" sx={{ mb: 3 }}>
+						{errorMessage}
+					</Alert>
+					<Button variant="contained" color="primary" onClick={() => navigate('/')}>
+						Voltar para Início
+					</Button>
+				</>
+			)}
+		</Box>
+	);
 };

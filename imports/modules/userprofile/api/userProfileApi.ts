@@ -19,7 +19,8 @@ class UserProfileApi extends OfflineBaseApi {
 	insertNewUser(
 		userData: { username: string; email: string; password?: string },
 		callback = (e: Error, r: any) => {
-			console.log(e, r);
+			console.log(e);
+			console.log(r);
 		}
 	) {
 		this.callMethod('insert', userData, callback);

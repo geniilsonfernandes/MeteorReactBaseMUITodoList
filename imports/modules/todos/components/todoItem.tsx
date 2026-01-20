@@ -84,7 +84,7 @@ const TodoItem: React.FC<ITodoItemProps> = ({ title, createdBy, isCompleted, onT
                     {title}
                 </Title>
                 <Subtitle>
-                    Criada por: <Box component="span" sx={{ textDecoration: 'underline' }}>{createdBy}</Box>
+                    Criada por: <Box component="span" sx={{ textDecoration: 'underline' }}>{isOwner ? 'Você' : createdBy}</Box>
                 </Subtitle>
             </TextContainer>
             <TodoItemMenu onEdit={isOwner ? handleEdit : undefined} onDelete={isOwner ? handleDelete : undefined} />

@@ -34,6 +34,18 @@ export const SysSectionPaddingXY = styled(Box)(({theme}) => ({
   }
 }));
 
+export const SysCenteredContent = styled(Box)(({ theme }) => ({
+  width: '100%',
+  margin: 'auto',
+  maxWidth: '1200px',
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '1000px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '800px',
+  }
+}));
+
 export const SysSectionPaddingX = styled(Box) (({theme}) => ({
   paddingLeft: `10vw`,
   paddingRight: `10vw`,

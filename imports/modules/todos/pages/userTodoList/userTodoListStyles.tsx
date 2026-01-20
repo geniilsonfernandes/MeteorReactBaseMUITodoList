@@ -15,7 +15,8 @@ export default {
 		height: '100vh',
 		overflow: 'auto',
 		gap: sysSizing.spacingFixedMd,
-		marginBottom: sysSizing.contentFabDistance
+		marginBottom: sysSizing.contentFabDistance,
+		marginTop: 200,
 	})),
 	Header: styled(Box)({
 		display: 'flex',

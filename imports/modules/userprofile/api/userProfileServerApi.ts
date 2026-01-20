@@ -12,6 +12,15 @@ import { EnumUserRoles } from './enumUser';
 import { IMeteorUser, IUserProfile, userProfileSch } from './userProfileSch';
 import User = Meteor.User;
 
+interface IMeteorError extends Error {
+	isClientSafe?: boolean;
+	error?: number;
+	reason?: string;
+	details?: string;
+	errorType?: string;
+}
+
+
 interface IUserProfileEstendido extends IUserProfile {
 	password?: string;
 
@@ -185,9 +194,31 @@ class UserProfileServerApi extends ProductServerBase<IUserProfile> {
 		}
 	};
 
+
+	async checkUserNameAlreadyExists(username: string) {
+		const user = await Meteor.users.findOneAsync({ username });
+		return !!user
+	}
+
+	async checkUserEmailAlreadyExists(email: string) {
+		const user = await Meteor.users.findOneAsync({ email });
+		return !!user
+	}
+
 	async serverInsert(dataObj: IUserProfileEstendido & { otheraccounts: any }, context: IContext) {
 		let insertId = null;
 		try {
+
+			console.log(dataObj, 'dataObj');
+
+			if (await this.checkUserNameAlreadyExists(dataObj.username)) {
+				throw new Meteor.Error(409, 'Usuário já cadastrado', 'Nome de usuário já cadastrado');
+			}
+
+			if (await this.checkUserEmailAlreadyExists(dataObj.email)) {
+				throw new Meteor.Error(409, 'Email já cadastrado', 'Email já cadastrado');
+			}
+
 			const { password } = dataObj;
 			dataObj = await this._checkDataBySchema(dataObj);
 			if (password) {
@@ -266,7 +297,16 @@ class UserProfileServerApi extends ProductServerBase<IUserProfile> {
 				return insertId;
 			}
 			return null;
-		} catch (insertError) {
+		} catch (err) {
+
+			const insertError = err as IMeteorError;
+
+			if (insertError.errorType === 'Meteor.Error') {
+				console.error('Meteor Error:', insertError.reason, insertError.error);
+			} else {
+				console.error('Unknown Error:', insertError.message);
+			}
+
 			throw insertError;
 		}
 	}
