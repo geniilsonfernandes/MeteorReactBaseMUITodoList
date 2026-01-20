@@ -11,6 +11,8 @@ export interface ITodoDeleteControllerContext {
     onDelete: () => void;
     doc: ITodo;
     loading: boolean;
+
+
 }
 
 interface ITodoDeleteController {
@@ -38,6 +40,11 @@ const TodoDeleteController: React.FC<ITodoDeleteController> = ({ id }) => {
     }, [id]);
 
 
+
+
+
+
+
     const onDelete = useCallback(() => {
         todoApi.remove(todoDetail, (e: IMeteorError) => {
             if (e) return showNotification({
@@ -60,6 +67,7 @@ const TodoDeleteController: React.FC<ITodoDeleteController> = ({ id }) => {
             onDelete,
             loading,
             doc: todoDetail,
+
         }}>
             <TodoDeleteView />
         </TodoDeleteControllerContext.Provider>

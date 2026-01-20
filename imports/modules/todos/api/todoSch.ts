@@ -49,7 +49,7 @@ export const todoSch: ISchema<ITodo> = {
 	assignee: {
 		type: String,
 		label: 'Designado a',
-		optional: true
+		optional: true,
 	},
 	owner: {
 		type: String,

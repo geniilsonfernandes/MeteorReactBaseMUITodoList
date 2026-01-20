@@ -5,6 +5,8 @@ import TodoDeleteController from "../todoDelete/todoDeleteController";
 import TodoDetailView from "./todoDetailView";
 import AppLayoutContext, { IAppLayoutContext } from "/imports/app/appLayoutProvider/appLayoutContext";
 import { ITodo } from "/imports/modules/todos/api/todoSch";
+import { userprofileApi } from "/imports/modules/userprofile/api/userProfileApi";
+import { IUserProfile } from "/imports/modules/userprofile/api/userProfileSch";
 import { IMeteorError } from "/imports/typings/IMeteorError";
 import { ISchema } from "/imports/typings/ISchema";
 import { sysSizing } from "/imports/ui/materialui/styles";
@@ -17,12 +19,15 @@ export interface ITodoDetailControllerContext {
     onChangeViewMode: (mode: 'view' | 'edit' | 'create') => void;
     onChangeCompleted: (completed: "pending" | "completed") => void;
     onDeleteTodo: (id?: string) => void;
+    onChangeAssignee: (assignee: string) => void;
     schema: ISchema<ITodo>;
     doc: ITodo;
     loading: boolean;
     formMode: 'create' | 'edit' | 'view';
     viewMode: 'create' | 'edit' | 'view';
     component: "dialog" | "drawer";
+    users: IUserProfile[];
+    loadingUsers: boolean;
 }
 
 interface ITodoDetailController {
@@ -40,6 +45,7 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
 
     const [viewMode, setViewMode] = React.useState<ITodoDetailController['mode']>(mode);
     const [formMode, setFormMode] = React.useState<ITodoDetailController['mode']>(mode);
+    const [assignee, setAssignee] = React.useState<string>('');
 
     const { closeDialog, showNotification, closeDrawer, showDialog } = useContext<IAppLayoutContext>(AppLayoutContext);
 
@@ -57,11 +63,33 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
     }, [id]);
 
 
-    const onCreateOrUpdate = useCallback((doc: ITodo) => {
+
+
+    /// get users for assignee
+    const { loading: loadingUsers, users } = useTracker(() => {
+        const subHandle = userprofileApi.subscribe('userProfileList');
+        const users = subHandle?.ready() ? userprofileApi.find({}).fetch() : [];
+
+        return {
+            users: users as IUserProfile[],
+            loading: !!subHandle && !subHandle.ready(),
+        };
+    }, []);
+
+
+
+    const getAssignee = () => {
+        return assignee;
+    }
+
+
+
+    const onCreateOrUpdate = (doc: ITodo) => {
         const sanitizeCompleted = ["pending", "completed", "canceled"].includes(doc.completed);
 
         const newDoc = {
             ...doc,
+            assignee: "LAPyg8t2yijySgRmM",
             completed: sanitizeCompleted ? doc.completed : "pending"
         };
 
@@ -85,7 +113,7 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
                 message: `A tarefa foi ${formMode === 'create' ? 'cadastrada' : 'atualizada'} com sucesso!`
             });
         });
-    }, [formMode, showNotification, component]);
+    }
 
 
     const onChangeCompleted = useCallback((completed: "pending" | "completed") => {
@@ -118,6 +146,13 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
 
     const onChangeFormMode = (mode: ITodoDetailController['mode']) => setFormMode(mode);
     const onChangeViewMode = (mode: ITodoDetailController['mode']) => setViewMode(mode);
+    const onChangeAssignee = (assignee: string) => {
+        setAssignee(assignee)
+        console.log(assignee, "onChangeAssignee");
+    };
+
+
+    const memoUsers = React.useMemo(() => users, [users]);
 
 
 
@@ -130,12 +165,15 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
             onChangeViewMode,
             onChangeCompleted,
             onDeleteTodo,
+            onChangeAssignee,
             schema: todoApi.getSchema(),
             loading,
             doc: todoDetail,
             viewMode,
             formMode,
-            component
+            component,
+            users: memoUsers,
+            loadingUsers
         }}>
             <TodoDetailView />
         </TodoDetailControllerContext.Provider>

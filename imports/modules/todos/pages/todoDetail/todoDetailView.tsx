@@ -1,8 +1,8 @@
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import { Box, Checkbox, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Button, Checkbox, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { ISysFormRef } from '../../../../ui/components/sysForm/typings';
 import SysFormButton from '../../../../ui/components/sysFormFields/sysFormButton/sysFormButton';
 import SysTextField from '../../../../ui/components/sysFormFields/sysTextField/sysTextField';
@@ -15,7 +15,7 @@ import { SysSelectField } from '/imports/ui/components/sysFormFields/sysSelectFi
 
 const TodoDetailView = () => {
     const sysFormRef = useRef<ISysFormRef>(null);
-    const { closeDrawer, closeDialog, schema, doc, onSubmit, loading, viewMode, formMode, onChangeFormMode, onChangeCompleted, onDeleteTodo, component } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
+    const { closeDrawer, closeDialog, schema, doc, onSubmit, loading, viewMode, formMode, onChangeFormMode, onChangeCompleted, onDeleteTodo, component, users, loadingUsers } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
 
     const modeHeaderTitle = {
         "view": "",
@@ -23,6 +23,8 @@ const TodoDetailView = () => {
         "create": "Criar Tarefa",
         "delete": "Excluir Tarefa"
     }
+
+
 
     const isOwner = doc?.isOwner;
 
@@ -43,6 +45,8 @@ const TodoDetailView = () => {
             <Typography variant="body1">Aguarde, carregando informações...</Typography>
         </Stack>
     </styles.Container>
+
+
 
 
     return (
@@ -78,6 +82,7 @@ const TodoDetailView = () => {
                     <SysTextField
                         name="description" placeholder="Digite a descrição da tarefa" multiline rows={6} />
                     <SysSelectField name="completed" placeholder="Selecionar" />
+                    {formMode !== 'view' && isOwner && <UserPrifileSelect />}
                     <styles.Actions>
                         <SysFormButton startIcon={<SysIcon name={'check'} />}>Salvar</SysFormButton>
                     </styles.Actions>
@@ -93,5 +98,42 @@ const TodoDetailView = () => {
         </styles.Container>
     );
 };
+
+
+
+const UserPrifileSelect = () => {
+    const [show, setShow] = useState(false)
+    const { users, loadingUsers, doc, onChangeAssignee } = useContext<ITodoDetailControllerContext>(TodoDetailControllerContext);
+
+
+    if (!show) return <Button onClick={() => setShow(true)}>Atribuir tarefa para alguém</Button>
+
+    return <Stack direction="row" spacing={1} alignItems="flex-end">
+        <FormControl sx={{ width: '100%' }} >
+            <InputLabel id="assignee">Atribuída a (opcional)</InputLabel>
+            <Select name="assignee" placeholder="Selecionar"
+                label="Atribuída a (opcional)"
+                disabled={loadingUsers}
+                defaultValue={doc?.assignee}
+                onChange={(e) => onChangeAssignee(e.target.value)}
+
+                sx={{ mt: 1 }}
+                displayEmpty
+            >
+                {users.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>
+                        {user.email}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+        <Button onClick={() => {
+            setShow(false)
+            onChangeAssignee('')
+        }} variant="outlined"><SysIcon name="close" /></Button>
+    </Stack>
+}
+
+
 
 export default TodoDetailView;

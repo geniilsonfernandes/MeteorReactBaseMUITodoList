@@ -1,6 +1,6 @@
 // region Imports
 import { Email } from 'meteor/email';
-import { buildTaskUpdatedEmail } from '../../email/templates/taskUpdatedEmail';
+import { buildTaskCreatedEmail, buildTaskUpdatedEmail } from '../../email/templates/taskUpdatedEmail';
 import { Recurso } from '../config/recursos';
 import { ITodo, todoSch } from './todoSch';
 import { ProductServerBase } from '/imports/api/productServerBase';
@@ -57,6 +57,9 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 	}
 
 
+
+
+
 	async afterUpdate(docObj: ITodo, context: IContext): Promise<void> {
 		try {
 			const assigneeProfileDoc =
@@ -78,12 +81,30 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 
 	async beforeInsert(_docObj: ITodo | Partial<ITodo>, _context: IContext) {
 		const result = await super.beforeInsert(_docObj, _context);
+
 		if (!result) return false;
 
-		_docObj.assignee = _context.user._id;
+		_docObj.assignee = _docObj.assignee || _context.user._id;
 		_docObj.owner = _context.user._id;
 
+
 		return true;
+	}
+
+	async afterInsert(docObj: ITodo, _context: IContext) {
+		const assigneeProfileDoc =
+			await userprofileServerApi
+				.getCollectionInstance()
+				.findOneAsync({ _id: docObj.assignee });
+
+
+		if (assigneeProfileDoc?.email) {
+			Email.send({
+				to: assigneeProfileDoc.email,
+				from: "Meu App <no-reply@todoApp.com>",
+				...buildTaskCreatedEmail(docObj)
+			});
+		}
 	}
 
 

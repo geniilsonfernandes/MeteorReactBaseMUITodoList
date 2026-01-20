@@ -79,13 +79,21 @@ const UserTodoListController: React.FC = () => {
 
     const { loading, todos } = useTracker(() => {
         const filter = {
-            assignee: user?._id,
-
-            $or: [
-                { title: { $regex: search, $options: 'i' } },
-                { description: { $regex: search, $options: 'i' } },
+            $and: [
+                {
+                    $or: [
+                        { assignee: user?._id },
+                        { owner: user?._id }
+                    ]
+                },
+                {
+                    $or: [
+                        { title: { $regex: search, $options: 'i' } },
+                        { description: { $regex: search, $options: 'i' } }
+                    ]
+                }
             ]
-        }
+        };
         const subHandle = todoApi.subscribe('todoList', filter);
 
         if (!subHandle?.ready() || !subHandle) {
