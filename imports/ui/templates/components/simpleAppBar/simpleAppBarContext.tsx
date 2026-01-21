@@ -9,6 +9,10 @@ interface ISysAppBarContext {
     abrirMenuPerfil: (event: React.MouseEvent<HTMLElement>) => void;
     abrirMenuMobile: (event: React.MouseEvent<HTMLElement>) => void;
     getOpcoesMenuDeUsuario: () => Array<ISysMenuItem>;
+    notificationAnchorEl: null | HTMLElement;
+    handleOpenNotifications: (event: React.MouseEvent<HTMLElement>) => void;
+    handleCloseNotifications: () => void;
+    notifications: Array<{ id: string; title: string; read: boolean }>;
 }
 
 const SysAppBarContext = createContext<ISysAppBarContext>({} as ISysAppBarContext);

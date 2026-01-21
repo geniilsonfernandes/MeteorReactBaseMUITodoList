@@ -50,6 +50,22 @@ const SimpleAppBarController: React.FC<ISimpleAppBarController> = ({
 
     
 
+    const [notificationAnchorEl, setNotificationAnchorEl] = React.useState<null | HTMLElement>(null);
+
+    const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
+        setNotificationAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseNotifications = () => {
+        setNotificationAnchorEl(null);
+    };
+
+    const notifications = [
+        { id: '1', title: 'New User Registered', read: false },
+        { id: '2', title: 'System Update Available', read: false },
+        { id: '3', title: 'Task #123 Completed', read: true },
+    ];
+
     const providerValue: ISysAppBarContext = {
         userName: user?.username || '-',
         menuPerfilRef,
@@ -58,7 +74,10 @@ const SimpleAppBarController: React.FC<ISimpleAppBarController> = ({
         abrirMenuPerfil,
         abrirMenuMobile,
         getOpcoesMenuDeUsuario,
-        
+        notificationAnchorEl,
+        handleOpenNotifications,
+        handleCloseNotifications,
+        notifications,
     };
 
     return (
