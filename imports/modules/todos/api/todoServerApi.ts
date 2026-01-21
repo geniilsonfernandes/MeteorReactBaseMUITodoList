@@ -1,6 +1,7 @@
 // region Imports
 import { Email } from 'meteor/email';
-import { buildTaskCreatedEmail, buildTaskUpdatedEmail } from '../../email/templates/taskUpdatedEmail';
+import { buildTaskCreatedEmail } from '../../email/templates/buildTaskCreatedEmail';
+import { buildTaskUpdatedEmail } from '../../email/templates/taskUpdatedEmail';
 import { Recurso } from '../config/recursos';
 import { ITodo, todoSch } from './todoSch';
 import { ProductServerBase } from '/imports/api/productServerBase';

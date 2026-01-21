@@ -1,19 +1,20 @@
 import { ITodo } from "../../todos/api/todoSch";
 
-export function buildTaskUpdatedEmail(docObj: ITodo) {
+
+export function buildTaskCreatedEmail(docObj: ITodo) {
     return {
-        subject: `Tarefa atualizada: ${docObj.title}`,
+        subject: `Tarefa criada: ${docObj.title}`,
 
         html: `
       <div style="font-family: Arial, sans-serif; max-width:600px; margin:auto; padding:20px; border:1px solid #eee; border-radius:8px;">
         
         <h2 style="color:#1976d2; margin-bottom:10px;">
-          ✏️ Tarefa atualizada
+          ✏️ Tarefa criada
         </h2>
 
         <p>Olá!</p>
 
-        <p>A seguinte tarefa foi atualizada:</p>
+        <p>A seguinte tarefa foi criada:</p>
 
         <div style="background:#f9f9f9; padding:15px; border-radius:6px; margin:15px 0;">
           <p><strong>Título:</strong> ${docObj.title}</p>
