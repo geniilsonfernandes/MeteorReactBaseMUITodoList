@@ -51,4 +51,6 @@ export interface INotification extends IDoc {
 	senderId?: string; 
 	type: 'TASK_ASSIGNED' | 'TASK_UPDATED' | 'TASK_DELETED' | 'SYSTEM'; 
 	read: boolean;
+	createdAt: Date;
+	updatedAt: Date;
 }

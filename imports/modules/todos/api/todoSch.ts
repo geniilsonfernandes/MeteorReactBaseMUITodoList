@@ -49,6 +49,7 @@ export const todoSch: ISchema<ITodo> = {
 	assignee: {
 		type: String,
 		label: 'Designado a',
+		defaultValue: "",
 		optional: true,
 	},
 	owner: {
@@ -67,6 +68,7 @@ export interface ITodo extends IDoc {
 	updatedAt: Date;
 	owner?: string;
 	assignee?: string;
+	assignee_teste?: string;
 	team?: string;
 	isCompleted: boolean;
 

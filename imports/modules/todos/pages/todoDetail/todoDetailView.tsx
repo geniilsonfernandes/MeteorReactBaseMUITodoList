@@ -82,7 +82,7 @@ const TodoDetailView = () => {
                     <SysTextField
                         name="description" placeholder="Digite a descrição da tarefa" multiline rows={6} />
                     <SysSelectField name="completed" placeholder="Selecionar" />
-                    {formMode !== 'view' && isOwner && <UserPrifileSelect />}
+                    {formMode !== 'view' && <UserPrifileSelect />}
                     <styles.Actions>
                         <SysFormButton startIcon={<SysIcon name={'check'} />}>Salvar</SysFormButton>
                     </styles.Actions>

@@ -45,7 +45,7 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
 
     const [viewMode, setViewMode] = React.useState<ITodoDetailController['mode']>(mode);
     const [formMode, setFormMode] = React.useState<ITodoDetailController['mode']>(mode);
-    const [assignee, setAssignee] = React.useState<string>('');
+    const assigneeRef = React.useRef<string>("");
 
     const { closeDialog, showNotification, closeDrawer, showDialog } = useContext<IAppLayoutContext>(AppLayoutContext);
 
@@ -78,19 +78,16 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
 
 
 
-    const getAssignee = () => {
-        return assignee;
-    }
 
 
-
-    const onCreateOrUpdate = (doc: ITodo) => {
+    const onCreateOrUpdate = useCallback((doc: ITodo) => {
         const sanitizeCompleted = ["pending", "completed", "canceled"].includes(doc.completed);
 
         const newDoc = {
             ...doc,
+            assignee: assigneeRef.current || todoDetail.assignee,
             completed: sanitizeCompleted ? doc.completed : "pending"
-        };
+        } as ITodo;
 
         const modes = {
             "create": todoApi.insert,
@@ -112,7 +109,7 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
                 message: `A tarefa foi ${formMode === 'create' ? 'cadastrada' : 'atualizada'} com sucesso!`
             });
         });
-    }
+    }, [formMode, assigneeRef, showNotification, closeDialog, closeDrawer, component]);
 
 
     const onChangeCompleted = useCallback((completed: "pending" | "completed") => {
@@ -145,14 +142,14 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
 
     const onChangeFormMode = (mode: ITodoDetailController['mode']) => setFormMode(mode);
     const onChangeViewMode = (mode: ITodoDetailController['mode']) => setViewMode(mode);
-    const onChangeAssignee = (assignee: string) => {
-        setAssignee(assignee)
-        console.log(assignee, "onChangeAssignee");
+
+
+    const onChangeAssignee = (value: string) => {
+        assigneeRef.current = value;
     };
 
 
     const memoUsers = React.useMemo(() => users, [users]);
-
 
 
     return (

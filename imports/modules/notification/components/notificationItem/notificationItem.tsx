@@ -3,7 +3,9 @@ import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import EditNotificationsIcon from "@mui/icons-material/EditNotifications";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { format } from "date-fns";
 import React from "react";
+import { INotification } from "../../api/notificationSch";
 import SysIcon from "/imports/ui/components/sysIcon/sysIcon";
 
 type NotificationType =
@@ -13,12 +15,7 @@ type NotificationType =
     | "SYSTEM";
 
 interface NotificationItemProps {
-    notification: {
-        _id?: string;
-        title: string;
-        read: boolean;
-        type: NotificationType;
-    };
+    notification: INotification;
     onRead: (id: string) => void;
     onDelete: (id: string) => void;
 }
@@ -101,6 +98,9 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                 </Typography>
                 <Typography fontSize={12} color="text.secondary">
                     {style.label} • {notification.read ? "Lida" : "Não lida"}
+                </Typography>
+                <Typography fontSize={12} color="text.secondary">
+                    {notification?.createdAt && format(notification?.createdAt, "dd/MM/yyyy HH:mm")}
                 </Typography>
             </Box>
 

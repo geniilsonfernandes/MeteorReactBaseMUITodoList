@@ -22,7 +22,7 @@ export class TodoServerApi extends ProductServerBase<ITodo> {
 			'todoList',
 			(filter = {}) => {
 				return this.collectionInstance.find(filter, {
-					fields: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1, assignee: 1, createdat: 1 }
+					fields: { title: 1, description: 1, completed: 1, createdAt: 1, updatedAt: 1, owner: 1, team: 1, assignee: 1, createdat: 1, assignee_teste: 1 }
 				});
 			},
 			async (doc: ITodo) => {
@@ -71,6 +71,7 @@ export class TodoServerApi extends ProductServerBase<ITodo> {
 			message: _docObj.description,
 			recipientId: _docObj.assignee,
 			senderId: _docObj.owner,
+			createdAt: new Date(),
 			type: "TASK_DELETED",
 			read: false
 		} as INotification, () => { });
@@ -98,6 +99,7 @@ export class TodoServerApi extends ProductServerBase<ITodo> {
 			message: docObj.description,
 			recipientId: docObj.assignee,
 			senderId: docObj.owner,
+			createdAt: new Date(),
 			type: "TASK_UPDATED",
 			read: false
 		} as INotification, () => { });
@@ -106,6 +108,11 @@ export class TodoServerApi extends ProductServerBase<ITodo> {
 	}
 
 	async beforeInsert(_docObj: ITodo | Partial<ITodo>, _context: IContext) {
+
+		console.log(
+			_docObj, "< == beforeInsert"
+		);
+
 		const result = await super.beforeInsert(_docObj, _context);
 
 		if (!result) return false;
@@ -113,6 +120,9 @@ export class TodoServerApi extends ProductServerBase<ITodo> {
 		_docObj.assignee = _docObj.assignee || _context.user._id;
 		_docObj.owner = _context.user._id;
 
+		console.log(
+			_docObj, "< == beforeInsert"
+		);
 
 		return true;
 	}
@@ -137,6 +147,7 @@ export class TodoServerApi extends ProductServerBase<ITodo> {
 			message: docObj.description,
 			recipientId: docObj.assignee,
 			senderId: docObj.owner,
+			createdAt: new Date(),
 			type: 'TASK_ASSIGNED',
 			read: false
 		} as INotification, () => { });
