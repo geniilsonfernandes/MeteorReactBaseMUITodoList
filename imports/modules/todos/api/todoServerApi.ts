@@ -73,46 +73,36 @@ export class TodoServerApi extends ProductServerBase<ITodo> {
 			senderId: _docObj.owner,
 			type: "TASK_DELETED",
 			read: false
-		}, () => { });
-
+		} as INotification, () => { });
 
 		return true;
 	}
 
-
-
-
-
-
-
 	async afterUpdate(docObj: ITodo, context: IContext): Promise<void> {
-		try {
-			const assigneeProfileDoc =
-				await userprofileServerApi
-					.getCollectionInstance()
-					.findOneAsync({ _id: docObj.assignee });
 
-			if (assigneeProfileDoc?.email) {
-				Email.sendAsync({
-					to: assigneeProfileDoc.email,
-					from: "Meu App <no-reply@todoApp.com>",
-					...buildTaskUpdatedEmail(docObj)
-				});
-			}
+		const assigneeProfileDoc =
+			await userprofileServerApi
+				.getCollectionInstance()
+				.findOneAsync({ _id: docObj.assignee });
 
-			await notificationServerApi.getCollectionInstance().insertAsync({
-				title: `Tarefa atualizada: ${docObj.title}`,
-				message: docObj.description,
-				recipientId: docObj.assignee,
-				senderId: docObj.owner,
-				type: "TASK_UPDATED",
-				read: false
-			}, () => { });
-
-
-		} catch (error) {
-			console.error("Error sending notification email:", error);
+		if (assigneeProfileDoc?.email) {
+			Email.sendAsync({
+				to: assigneeProfileDoc.email,
+				from: "Meu App <no-reply@todoApp.com>",
+				...buildTaskUpdatedEmail(docObj)
+			});
 		}
+
+		await notificationServerApi.getCollectionInstance().insertAsync({
+			title: `Tarefa atualizada: ${docObj.title}`,
+			message: docObj.description,
+			recipientId: docObj.assignee,
+			senderId: docObj.owner,
+			type: "TASK_UPDATED",
+			read: false
+		} as INotification, () => { });
+
+
 	}
 
 	async beforeInsert(_docObj: ITodo | Partial<ITodo>, _context: IContext) {
