@@ -2,6 +2,8 @@
 import { Email } from 'meteor/email';
 import { buildTaskCreatedEmail } from '../../email/templates/buildTaskCreatedEmail';
 import { buildTaskUpdatedEmail } from '../../email/templates/taskUpdatedEmail';
+import { INotification } from '../../notification/api/notificationSch';
+import { notificationServerApi } from '../../notification/api/notificationServerApi';
 import { Recurso } from '../config/recursos';
 import { ITodo, todoSch } from './todoSch';
 import { ProductServerBase } from '/imports/api/productServerBase';
@@ -10,7 +12,7 @@ import { IContext } from '/imports/typings/IContext';
 
 // endregion
 
-class TodoServerApi extends ProductServerBase<ITodo> {
+export class TodoServerApi extends ProductServerBase<ITodo> {
 	constructor() {
 		super('todo', todoSch, { resources: Recurso });
 		this.afterUpdate = this.afterUpdate.bind(this);
@@ -55,7 +57,29 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 				isOwner: doc.owner === userId || doc.assignee === userId
 			};
 		});
+
+
 	}
+
+
+
+
+	async afterRemove(_docObj: any, _context: IContext): Promise<any> {
+
+		await notificationServerApi.getCollectionInstance().insertAsync({
+			title: `Tarefa deletada: ${_docObj.title}`,
+			message: _docObj.description,
+			recipientId: _docObj.assignee,
+			senderId: _docObj.owner,
+			type: "TASK_DELETED",
+			read: false
+		}, () => { });
+
+
+		return true;
+	}
+
+
 
 
 
@@ -69,12 +93,23 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 					.findOneAsync({ _id: docObj.assignee });
 
 			if (assigneeProfileDoc?.email) {
-				Email.send({
+				Email.sendAsync({
 					to: assigneeProfileDoc.email,
 					from: "Meu App <no-reply@todoApp.com>",
 					...buildTaskUpdatedEmail(docObj)
 				});
 			}
+
+			await notificationServerApi.getCollectionInstance().insertAsync({
+				title: `Tarefa atualizada: ${docObj.title}`,
+				message: docObj.description,
+				recipientId: docObj.assignee,
+				senderId: docObj.owner,
+				type: "TASK_UPDATED",
+				read: false
+			}, () => { });
+
+
 		} catch (error) {
 			console.error("Error sending notification email:", error);
 		}
@@ -100,20 +135,30 @@ class TodoServerApi extends ProductServerBase<ITodo> {
 
 
 		if (assigneeProfileDoc?.email) {
-			Email.send({
+			Email.sendAsync({
 				to: assigneeProfileDoc.email,
 				from: "Meu App <no-reply@todoApp.com>",
 				...buildTaskCreatedEmail(docObj)
 			});
 		}
+
+		await notificationServerApi.getCollectionInstance().insertAsync({
+			title: `Nova tarefa: ${docObj.title}`,
+			message: docObj.description,
+			recipientId: docObj.assignee,
+			senderId: docObj.owner,
+			type: 'TASK_ASSIGNED',
+			read: false
+		} as INotification, () => { });
 	}
+
 
 
 }
 
 
 
-// cria um seed com 3 todos exemplo
+
 
 export const todoServerApi = new TodoServerApi();
 

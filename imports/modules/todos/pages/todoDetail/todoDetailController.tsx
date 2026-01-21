@@ -89,7 +89,6 @@ const TodoDetailController: React.FC<ITodoDetailController> = ({ mode, id, compo
 
         const newDoc = {
             ...doc,
-            assignee: "LAPyg8t2yijySgRmM",
             completed: sanitizeCompleted ? doc.completed : "pending"
         };
 

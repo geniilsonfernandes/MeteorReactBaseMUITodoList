@@ -1,3 +1,4 @@
+import { Recurso as Notificacoes } from '/imports/modules/notification/config/recursos';
 import { Recurso as Todos } from '/imports/modules/todos/config/recursos';
 import { Recurso as Usuarios } from '/imports/modules/userprofile/config/recurso';
 import { RoleType } from '/imports/security/config/roleType';
@@ -10,6 +11,7 @@ const _mapRolesRecursos: MapRolesRecursos = {
 	[RoleType.PUBLICO]: [],
 	[RoleType.USUARIO]: [
 		..._getAllValues(Todos),
+		..._getAllValues(Notificacoes),
 	],
 	[RoleType.ADMINISTRADOR]: [
 		Usuarios.USUARIO_CREATE,

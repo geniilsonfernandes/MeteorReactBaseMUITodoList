@@ -65,13 +65,13 @@ export interface ITodo extends IDoc {
 	completed: string;
 	createdAt: Date;
 	updatedAt: Date;
-	owner: string;
-	assignee: string;
-	team: string;
+	owner?: string;
+	assignee?: string;
+	team?: string;
 	isCompleted: boolean;
 
 	//
 	owner_data?: IUserProfile;
 	assignee_data?: IUserProfile;
-	isOwner: boolean;
+	isOwner?: boolean;
 }
